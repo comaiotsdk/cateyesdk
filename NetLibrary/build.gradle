@@ -1,0 +1,107 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 18
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    def SDK_NAME = 'comaiot_cat_eye_sdk'
+    def SDK_VERSION = '_V1.0.6'
+
+    android.libraryVariants.all { variant ->
+        variant.outputs.all {
+            def fileName = SDK_NAME + SDK_VERSION + ".aar"
+            outputFileName = fileName
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:support-v4:28.0.1'
+    implementation "com.android.support:appcompat-v7:28.0.1"
+    api 'com.squareup.okhttp3:okhttp:3.14.0'
+    compileOnly 'com.squareup.retrofit2:adapter-rxjava:2.5.0'
+    compileOnly 'org.greenrobot:eventbus:3.1.1'
+    compileOnly 'com.google.code.gson:gson:2.8.5'
+    compileOnly 'com.squareup.retrofit2:retrofit:2.5.0'
+    compileOnly 'io.reactivex:rxjava:1.3.8'
+    compileOnly 'io.reactivex:rxandroid:1.2.1'
+    compileOnly 'com.squareup.retrofit2:converter-gson:2.5.0'
+    compileOnly 'org.conscrypt:conscrypt-openjdk-uber:2.0.0'
+    compileOnly 'org.codehaus.mojo:animal-sniffer-annotations:1.17'
+    compileOnly 'com.github.aaronp:agora-io_2.11:v0.3.1'
+    compileOnly 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
+    compileOnly 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    compileOnly files('libs/agora-rtc-sdk.jar')
+}
+
+def SDK_NAME = 'comaiot_cat_eye_sdk'
+def SDK_VERSION = '_V1.0.6'
+
+task deleteBuild(type: Delete) {
+    delete "build/libs/" + SDK_NAME + SDK_VERSION + ".jar"
+}
+
+task makeJar(type: Jar) {
+    archiveName SDK_NAME + SDK_VERSION + '.jar'
+    from('build/intermediates/classes/release/')
+    from(project.zipTree("custom/adapter-rxjava-2.5.0.jar"))
+    from(project.zipTree("custom/converter-gson-2.5.0.jar"))
+    from(project.zipTree("custom/eventbus-3.1.1.jar"))
+    from(project.zipTree("custom/gson-2.8.5.jar"))
+    from(project.zipTree("custom/okhttp-3.14.0.jar"))
+    from(project.zipTree("custom/okio-1.15.0.jar"))
+    from(project.zipTree("custom/retrofit-2.5.0.jar"))
+    from(project.zipTree("custom/rxandroid-1.2.1.jar"))
+    from(project.zipTree("custom/rxjava-1.3.8.jar"))
+    from(project.zipTree("custom/org.eclipse.paho.client.mqttv3-1.2.0.jar"))
+    from(project.zipTree("custom/org.eclipse.paho.android.service-1.1.1.jar"))
+    from(project.zipTree("custom/conscrypt-openjdk-uber-2.0.0-sources.jar"))
+    from('src/main/resources/')
+    destinationDir = file('build/libs')
+
+    exclude('com/comaiot/net/library/BuildConfig.class')
+    exclude('com/comaiot/net/library/BuildConfig\\$*.class')
+    exclude('com/comaiot/net/library/R.class')
+    exclude('com/comaiot/net/library/R\\$*.class')
+
+    include('com/comaiot/net/library/**/*.class')
+    include('com/bumptech/comaiot_glide/**/*.class')
+    include('sw/**/*.class')
+
+    include('retrofit2/adapter/rxjava/**/*.class')
+    include('org/conscrypt/**/*.class')
+    include('retrofit2/converter/gson/**/*.class')
+    include('org/greenrobot/eventbus/**/*.class')
+    include('com/google/gson/**/*.class')
+    include('okhttp3/**/*.class')
+    include('okio/**/*.class')
+    include('org/eclipse/paho/**/*.class')
+    include('org/eclipse/paho/**/*.properties')
+    include('retrofit2/**/*.class')
+    include('rx/**/*.class')
+}
+
