@@ -43,19 +43,19 @@ dependencies {
     implementation 'com.android.support:support-v4:28.0.1'
     implementation "com.android.support:appcompat-v7:28.0.1"
     api 'com.squareup.okhttp3:okhttp:3.14.0'
-    compileOnly 'com.squareup.retrofit2:adapter-rxjava:2.5.0'
-    compileOnly 'org.greenrobot:eventbus:3.1.1'
-    compileOnly 'com.google.code.gson:gson:2.8.5'
-    compileOnly 'com.squareup.retrofit2:retrofit:2.5.0'
-    compileOnly 'io.reactivex:rxjava:1.3.8'
-    compileOnly 'io.reactivex:rxandroid:1.2.1'
-    compileOnly 'com.squareup.retrofit2:converter-gson:2.5.0'
-    compileOnly 'org.conscrypt:conscrypt-openjdk-uber:2.0.0'
-    compileOnly 'org.codehaus.mojo:animal-sniffer-annotations:1.17'
-    compileOnly 'com.github.aaronp:agora-io_2.11:v0.3.1'
-    compileOnly 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
-    compileOnly 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
-    compileOnly files('libs/agora-rtc-sdk.jar')
+    api 'com.squareup.retrofit2:adapter-rxjava:2.5.0'
+    api 'org.greenrobot:eventbus:3.1.1'
+    api 'com.google.code.gson:gson:2.8.5'
+    api 'com.squareup.retrofit2:retrofit:2.5.0'
+    api 'io.reactivex:rxjava:1.3.8'
+    api 'io.reactivex:rxandroid:1.2.1'
+    api 'com.squareup.retrofit2:converter-gson:2.5.0'
+    api 'org.conscrypt:conscrypt-openjdk-uber:2.0.0'
+    api 'org.codehaus.mojo:animal-sniffer-annotations:1.17'
+    api 'com.github.aaronp:agora-io_2.11:v0.3.1'
+    api 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
+    api 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    api files('libs/agora-rtc-sdk.jar')
 }
 
 def SDK_NAME = 'comaiot_cat_eye_sdk'
