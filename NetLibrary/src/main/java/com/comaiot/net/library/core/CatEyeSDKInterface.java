@@ -1370,7 +1370,7 @@ public class CatEyeSDKInterface implements CatEyeView {
         }
     }
 
-    protected Map<String, DeviceSettings> getCacheMap() {
+    public Map<String, DeviceSettings> getCacheMap() {
         return mDeviceSettingsMap;
     }
 }
