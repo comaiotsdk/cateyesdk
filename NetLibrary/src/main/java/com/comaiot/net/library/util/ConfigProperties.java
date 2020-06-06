@@ -10,15 +10,15 @@ public class ConfigProperties {
     private static final String video_engine_id = "1dd34fa8e0f74327ba89927ceaf47691";
     private static final String SDK_Version = "V1.0.6";
 
-    public static String getVideoEngineAppId() throws IOException {
+    public static String getVideoEngineAppId() {
         return video_engine_id;
     }
 
-    public static int getClientId() throws IOException {
+    public static int getClientId() {
         return client_id;
     }
 
-    public static String getVersion() throws IOException {
+    public static String getVersion() {
         return SDK_Version;
     }
 }

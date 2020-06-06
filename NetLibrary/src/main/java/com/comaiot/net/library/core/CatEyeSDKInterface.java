@@ -1174,7 +1174,6 @@ public class CatEyeSDKInterface implements CatEyeView {
         CmdInfo cmdInfo = new CmdInfo();
         cmdInfo.setCmd("open_video");
         cmdInfo.setDevUid(devUid);
-        cmdInfo.setClientId(mqttManager.getClientId());
         cmdInfo.setCreateTime(System.currentTimeMillis());
         String json = GsonUtils.toJson(cmdInfo);
         mqttManager.publish(topic, json, false, 2);

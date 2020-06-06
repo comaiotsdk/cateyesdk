@@ -8,9 +8,11 @@ import android.os.Message;
 import android.view.SurfaceView;
 
 
+import com.comaiot.net.library.util.ConfigProperties;
 import com.comaiot.net.library.utils.Logger;
 
 import java.io.File;
+import java.io.IOException;
 
 import io.agora.rtc.Constants;
 import io.agora.rtc.RtcEngine;
@@ -38,9 +40,9 @@ public class WorkerThread extends Thread {
     private RtcEngine mRtcEngine;
     private String engine_app_id;
 
-    public WorkerThread(Context context, String engine_app_id) {
+    public WorkerThread(Context context) {
         this.mContext = context;
-        this.engine_app_id = engine_app_id;
+        this.engine_app_id = ConfigProperties.getVideoEngineAppId();
         this.mEngineConfig = new EngineConfig();
         mEngineConfig.mUid = 0;
         this.mEngineEventHandler = new EngineEventHandler(mContext, mEngineConfig);
@@ -133,7 +135,7 @@ public class WorkerThread extends Thread {
         }
 
         ensureRtcEngineReadyLock();
-        mRtcEngine.joinChannel(null, channel, "Comaiot_App", uid);
+        mRtcEngine.joinChannel(null, channel, "Comaiot_SDK", uid);
 
         mEngineConfig.mChannel = channel;
 

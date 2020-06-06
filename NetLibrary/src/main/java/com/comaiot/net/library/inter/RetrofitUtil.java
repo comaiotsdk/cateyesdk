@@ -325,13 +325,7 @@ public class RetrofitUtil {
 
         int clientId = 1;
 
-        try {
-            clientId = ConfigProperties.getClientId();
-        } catch (IOException e) {
-            String err = "[loginComaiot] ConfigProperties getClientId " + e.toString();
-            Logger.ee(err);
-            throw new RuntimeException(err);
-        }
+        clientId = ConfigProperties.getClientId();
 
         if (clientId == YD) {
             appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
@@ -458,13 +452,7 @@ public class RetrofitUtil {
 
         int clientId = 1;
 
-        try {
-            clientId = ConfigProperties.getClientId();
-        } catch (IOException e) {
-            String err = "[login" + subscribeType + "] ConfigProperties getClientId " + e.toString();
-            Logger.ee(err);
-            throw new RuntimeException(err);
-        }
+        clientId = ConfigProperties.getClientId();
 
         if (clientId == YD) {
             appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
@@ -540,11 +528,9 @@ public class RetrofitUtil {
         params.setWeixin_type(weixin_type);
         params.setPush_id(pushId);
         params.setType("Android");
-        try {
-            params.setVersion(ConfigProperties.getVersion());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        params.setVersion(ConfigProperties.getVersion());
+
         String json = GsonUtils.toJson(params);
         Logger.dd("login" + subscribeType + "Json : \n" + json);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
@@ -562,13 +548,7 @@ public class RetrofitUtil {
 
         int clientId = 1;
 
-        try {
-            clientId = ConfigProperties.getClientId();
-        } catch (IOException e) {
-            String err = "[loginEmail] ConfigProperties getClientId " + e.toString();
-            Logger.ee(err);
-            throw new RuntimeException(err);
-        }
+        clientId = ConfigProperties.getClientId();
 
         if (clientId == YD) {
             appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
@@ -641,11 +621,9 @@ public class RetrofitUtil {
         params.setSub_type("password");
         params.setPush_id(pushId);
         params.setType("Android");
-        try {
-            params.setVersion(ConfigProperties.getVersion());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        params.setVersion(ConfigProperties.getVersion());
+
         String json = GsonUtils.toJson(params);
         Logger.dd("loginEmail Json : \n" + json);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
@@ -1089,13 +1067,7 @@ public class RetrofitUtil {
 
         int clientId = 1;
 
-        try {
-            clientId = ConfigProperties.getClientId();
-        } catch (IOException e) {
-            String err = "[loginServer] ConfigProperties getClientId " + e.toString();
-            Logger.ee(err);
-            throw new RuntimeException(err);
-        }
+        clientId = ConfigProperties.getClientId();
 
         if (clientId == YD) {
             appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
@@ -1184,13 +1156,7 @@ public class RetrofitUtil {
 
         int clientId = 1;
 
-        try {
-            clientId = ConfigProperties.getClientId();
-        } catch (IOException e) {
-            String err = "[loginServer] ConfigProperties getClientId " + e.toString();
-            Logger.ee(err);
-            throw new RuntimeException(err);
-        }
+        clientId = ConfigProperties.getClientId();
 
         if (clientId == YD) {
             appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
@@ -1283,13 +1249,7 @@ public class RetrofitUtil {
 
         int clientId = 1;
 
-        try {
-            clientId = ConfigProperties.getClientId();
-        } catch (IOException e) {
-            String err = "[loginServer] ConfigProperties getClientId " + e.toString();
-            Logger.ee(err);
-            throw new RuntimeException(err);
-        }
+        clientId = ConfigProperties.getClientId();
 
         if (clientId == YD) {
             appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
@@ -1376,13 +1336,9 @@ public class RetrofitUtil {
 
     public void queryAgoraSocketUserNumber(Subscriber<ArogaBean<ArogaBean.Data>> subscriber, String channelName) {
         String appId = null;
-        try {
-            appId = ConfigProperties.getVideoEngineAppId();
-        } catch (IOException e) {
-            final String error = "[queryAgoraSocketUserNumber] ConfigProperties getVideoEngineAppId " + e.toString();
-            Logger.ee(error);
-            throw new RuntimeException(error);
-        }
+
+        appId = ConfigProperties.getVideoEngineAppId();
+
         mAgoraService.queryAgoraSocketUserNumber(appId, channelName)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
@@ -1392,13 +1348,9 @@ public class RetrofitUtil {
 
     public void agoraLicenses(Subscriber<ArogaBean.Licenses> subscriber, String custom, String credential) {
         String appId = null;
-        try {
-            appId = ConfigProperties.getVideoEngineAppId();
-        } catch (IOException e) {
-            final String error = "[agoraLicenses] ConfigProperties getVideoEngineAppId " + e.toString();
-            Logger.ee(error);
-            throw new RuntimeException(error);
-        }
+
+        appId = ConfigProperties.getVideoEngineAppId();
+
         ArogaLicensesParams params = new ArogaLicensesParams();
         params.setCredential(credential);
         params.setCustom(custom);
@@ -1557,13 +1509,7 @@ public class RetrofitUtil {
 
         int clientId = 1;
 
-        try {
-            clientId = ConfigProperties.getClientId();
-        } catch (IOException e) {
-            String err = "[loginServer] ConfigProperties getClientId " + e.toString();
-            Logger.ee(err);
-            throw new RuntimeException(err);
-        }
+        clientId = ConfigProperties.getClientId();
 
         if (clientId == YD) {
             appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());

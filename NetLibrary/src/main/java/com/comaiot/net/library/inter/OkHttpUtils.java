@@ -3,7 +3,8 @@ package com.comaiot.net.library.inter;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.comaiot.net.library.req_params.BaseJsonParams;
 import com.comaiot.net.library.req_params.AppChangeAccountInfoParams;

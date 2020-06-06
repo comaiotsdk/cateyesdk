@@ -1,6 +1,7 @@
 package com.comaiot.net.library.bean;
 
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 
