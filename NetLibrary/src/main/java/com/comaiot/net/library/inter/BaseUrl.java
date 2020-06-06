@@ -10,11 +10,11 @@ import java.net.URLDecoder;
 public class BaseUrl {
     private static String BASE_URL = "I276dbmOVthXyG377YHQmwAqxoRKuQ9DcNiuo32+I87pU//YYJiDkP/QZENicrSiMQnDQbzrXAYdzcBHcGOkyQ==";
 
-    public static final String getBaseUrl() {
+    protected static final String getBaseUrl() {
         return URLDecoder.decode(new String(Base64.decode(DESUtils.decryptBaseUrl(getUrl()), Base64.DEFAULT)));
     }
 
-    public static final void setBaseUrl(String baseUrl) {
+    protected static final void setBaseUrl(String baseUrl) {
         BASE_URL = baseUrl;
     }
 

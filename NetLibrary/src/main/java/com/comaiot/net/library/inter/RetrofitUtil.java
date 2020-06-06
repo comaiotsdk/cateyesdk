@@ -146,8 +146,10 @@ public class RetrofitUtil {
     private AgoraService mAgoraLicensesService;
 
     private static RetrofitUtil mInstance;
+    private final String ak;
+    private final String sk;
 
-    public static void getInstance(Context context) {
+    public static void getInstance(Context context, String ak, String sk) {
         mContext = context;
         String urlPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CatEyeSDK/BaseUrl/url.txt";
         File file = new File(urlPath);
@@ -188,13 +190,13 @@ public class RetrofitUtil {
         if (null == mInstance) {
             synchronized (Object.class) {
                 if (null == mInstance) {
-                    mInstance = new RetrofitUtil();
+                    mInstance = new RetrofitUtil(ak, sk);
                 }
             }
         }
     }
 
-    public static String getBaseUrl() {
+    protected static String getBaseUrl() {
         return BaseUrl.getBaseUrl();
     }
 
@@ -207,7 +209,9 @@ public class RetrofitUtil {
         return mInstance;
     }
 
-    private RetrofitUtil() {
+    private RetrofitUtil(String ak, String sk) {
+        this.ak = ak;
+        this.sk = sk;
         //手动创建一个OkHttpClient并设置超时时间
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .sslSocketFactory(createSSLSocketFactory())
@@ -320,75 +324,12 @@ public class RetrofitUtil {
     }
 
     public void AppReg(String countryCode, Subscriber<RegEntity> subscriber) {
-        String appAk = "";
-        String appSk = "";
-
-        int clientId = 1;
-
-        clientId = ConfigProperties.getClientId();
-
-        if (clientId == YD) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getYdAppSk());
-        } else if (clientId == GVS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppSk());
-        } else if (clientId == FANGHUI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppSk());
-        } else if (clientId == ZHOUYAYUN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppSk());
-        } else if (clientId == KUNSHANG) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppSk());
-        } else if (clientId == DESHIMAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppSk());
-        } else if (clientId == MANYA) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppSk());
-        } else if (clientId == AITE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppSk());
-        } else if (clientId == PHILIPS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppSk());
-        } else if (clientId == HONYAR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppSk());
-        } else if (clientId == HUNE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppSk());
-        } else if (clientId == RUOCHAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppSk());
-        } else if (clientId == IWR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppSk());
-        } else if (clientId == RUDOLPH) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppSk());
-        } else if (clientId == DAYIN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppSk());
-        } else if (clientId == LEIXUNKEWEI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppSk());
-        } else if (clientId == IFLYTEK) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppSk());
-        } else if (clientId == JIANSHI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppSk());
-        }
-
         long timestamp = System.currentTimeMillis() / 1000;
         String nonce = StringUtils.get_bit_string(6);
-        String sign = StringUtils.sign(appSk, timestamp, nonce);
+        String sign = StringUtils.sign(sk, timestamp, nonce);
 
         RegParams params = new RegParams();
-        params.setAppak(appAk);
+        params.setAppak(ak);
         params.setTimestamp(timestamp);
         params.setNonce(nonce);
         params.setSign(sign);
@@ -447,76 +388,9 @@ public class RetrofitUtil {
     }
 
     public void login(Subscriber<AppSubscribeEntity> subscriber, String phoneNumber, String password, String pushId, String subscribeType, String verify_code, String weixin_code, String weixin_type) {
-        String appAk = "";
-        String appSk = "";
-
-        int clientId = 1;
-
-        clientId = ConfigProperties.getClientId();
-
-        if (clientId == YD) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getYdAppSk());
-        } else if (clientId == GVS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppSk());
-        } else if (clientId == FANGHUI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppSk());
-        } else if (clientId == ZHOUYAYUN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppSk());
-        } else if (clientId == KUNSHANG) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppSk());
-        } else if (clientId == DESHIMAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppSk());
-        } else if (clientId == MANYA) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppSk());
-        } else if (clientId == AITE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppSk());
-        } else if (clientId == PHILIPS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppSk());
-        } else if (clientId == HONYAR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppSk());
-        } else if (clientId == HUNE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppSk());
-        } else if (clientId == RUOCHAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppSk());
-        } else if (clientId == IWR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppSk());
-        } else if (clientId == RUDOLPH) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppSk());
-        } else if (clientId == DAYIN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppSk());
-        } else if (clientId == LEIXUNKEWEI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppSk());
-        } else if (clientId == IFLYTEK) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppSk());
-        } else if (clientId == JIANSHI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppSk());
-        } else {
-            //TODO
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getComaiotAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getComaiotAppSk());
-        }
-
         long timestamp = System.currentTimeMillis() / 1000;
         String nonce = StringUtils.get_bit_string(6);
-        String sign = StringUtils.sign(appSk, timestamp, nonce);
+        String sign = StringUtils.sign(sk, timestamp, nonce);
         AppSubscribeParams params = new AppSubscribeParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -543,76 +417,9 @@ public class RetrofitUtil {
     }
 
     public void loginEmail(Subscriber<AppSubscribeEntity> subscriber, String email, String password, String pushId) {
-        String appAk = "";
-        String appSk = "";
-
-        int clientId = 1;
-
-        clientId = ConfigProperties.getClientId();
-
-        if (clientId == YD) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getYdAppSk());
-        } else if (clientId == GVS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppSk());
-        } else if (clientId == FANGHUI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppSk());
-        } else if (clientId == ZHOUYAYUN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppSk());
-        } else if (clientId == KUNSHANG) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppSk());
-        } else if (clientId == DESHIMAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppSk());
-        } else if (clientId == MANYA) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppSk());
-        } else if (clientId == AITE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppSk());
-        } else if (clientId == PHILIPS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppSk());
-        } else if (clientId == HONYAR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppSk());
-        } else if (clientId == HUNE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppSk());
-        } else if (clientId == RUOCHAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppSk());
-        } else if (clientId == IWR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppSk());
-        } else if (clientId == RUDOLPH) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppSk());
-        } else if (clientId == DAYIN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppSk());
-        } else if (clientId == LEIXUNKEWEI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppSk());
-        } else if (clientId == IFLYTEK) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppSk());
-        } else if (clientId == JIANSHI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppSk());
-        } else {
-            //TODO
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getComaiotAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getComaiotAppSk());
-        }
-
         long timestamp = System.currentTimeMillis() / 1000;
         String nonce = StringUtils.get_bit_string(6);
-        String sign = StringUtils.sign(appSk, timestamp, nonce);
+        String sign = StringUtils.sign(sk, timestamp, nonce);
         AppEmailSubscribeReqParams params = new AppEmailSubscribeReqParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -1062,74 +869,11 @@ public class RetrofitUtil {
     // ------------------------------------------------------------------------------------------------------------//
 
     public void loginServer(Subscriber<AppSubscribeEntity> subscriber, String jwt_token) {
-        String appAk = "";
-        String appSk = "";
-
-        int clientId = 1;
-
-        clientId = ConfigProperties.getClientId();
-
-        if (clientId == YD) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getYdAppSk());
-        } else if (clientId == GVS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppSk());
-        } else if (clientId == FANGHUI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppSk());
-        } else if (clientId == ZHOUYAYUN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppSk());
-        } else if (clientId == KUNSHANG) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppSk());
-        } else if (clientId == DESHIMAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppSk());
-        } else if (clientId == MANYA) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppSk());
-        } else if (clientId == AITE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppSk());
-        } else if (clientId == PHILIPS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppSk());
-        } else if (clientId == HONYAR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppSk());
-        } else if (clientId == HUNE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppSk());
-        } else if (clientId == RUOCHAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppSk());
-        } else if (clientId == IWR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppSk());
-        } else if (clientId == RUDOLPH) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppSk());
-        } else if (clientId == DAYIN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppSk());
-        } else if (clientId == LEIXUNKEWEI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppSk());
-        } else if (clientId == IFLYTEK) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppSk());
-        } else if (clientId == JIANSHI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppSk());
-        }
-
         long timestamp = System.currentTimeMillis() / 1000;
         String nonce = StringUtils.get_bit_string(6);
-        String sign = StringUtils.sign(appSk, timestamp, nonce);
+        String sign = StringUtils.sign(sk, timestamp, nonce);
         CatEyeLoginParams params = new CatEyeLoginParams();
-        params.setAppak(appAk);
+        params.setAppak(ak);
         params.setTimestamp(timestamp);
         params.setNonce(nonce);
         params.setSign(sign);
@@ -1150,79 +894,12 @@ public class RetrofitUtil {
     }
 
     public void setWeChatPush(Subscriber<PartnerWeixinPushConfigEntity> subscriber, String weixin_accountid, String weixin_openid, String weixin_unionid, int push_on_off) {
-
-        String appAk = "";
-        String appSk = "";
-
-        int clientId = 1;
-
-        clientId = ConfigProperties.getClientId();
-
-        if (clientId == YD) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getYdAppSk());
-        } else if (clientId == GVS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppSk());
-        } else if (clientId == FANGHUI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppSk());
-        } else if (clientId == ZHOUYAYUN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppSk());
-        } else if (clientId == KUNSHANG) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppSk());
-        } else if (clientId == DESHIMAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppSk());
-        } else if (clientId == MANYA) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppSk());
-        } else if (clientId == AITE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppSk());
-        } else if (clientId == PHILIPS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppSk());
-        } else if (clientId == HONYAR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppSk());
-        } else if (clientId == HUNE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppSk());
-        } else if (clientId == RUOCHAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppSk());
-        } else if (clientId == IWR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppSk());
-        } else if (clientId == RUDOLPH) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppSk());
-        } else if (clientId == DAYIN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppSk());
-        } else if (clientId == LEIXUNKEWEI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppSk());
-        } else if (clientId == IFLYTEK) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppSk());
-        } else if (clientId == JIANSHI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppSk());
-        } else {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getComaiotAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getComaiotAppSk());
-        }
-
         long timestamp = System.currentTimeMillis() / 1000;
         String nonce = StringUtils.get_bit_string(6);
-        String sign = StringUtils.sign(appSk, timestamp, nonce);
+        String sign = StringUtils.sign(sk, timestamp, nonce);
 
         PartnerWeixinPushConfigParams params = new PartnerWeixinPushConfigParams();
-        params.setAppak(appAk);
+        params.setAppak(ak);
         params.setTimestamp(System.currentTimeMillis() / 1000);
         params.setNonce(nonce);
         params.setSign(sign);
@@ -1243,79 +920,12 @@ public class RetrofitUtil {
     }
 
     public void notificationWeChat(Subscriber<PartnerWeixinPushNoticeEntity> subscriber, String weChatAccountid, String weChatOpenidList, String content) {
-
-        String appAk = "";
-        String appSk = "";
-
-        int clientId = 1;
-
-        clientId = ConfigProperties.getClientId();
-
-        if (clientId == YD) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getYdAppSk());
-        } else if (clientId == GVS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppSk());
-        } else if (clientId == FANGHUI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppSk());
-        } else if (clientId == ZHOUYAYUN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppSk());
-        } else if (clientId == KUNSHANG) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppSk());
-        } else if (clientId == DESHIMAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppSk());
-        } else if (clientId == MANYA) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppSk());
-        } else if (clientId == AITE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppSk());
-        } else if (clientId == PHILIPS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppSk());
-        } else if (clientId == HONYAR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppSk());
-        } else if (clientId == HUNE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppSk());
-        } else if (clientId == RUOCHAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppSk());
-        } else if (clientId == IWR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppSk());
-        } else if (clientId == RUDOLPH) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppSk());
-        } else if (clientId == DAYIN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppSk());
-        } else if (clientId == LEIXUNKEWEI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppSk());
-        } else if (clientId == IFLYTEK) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppSk());
-        } else if (clientId == JIANSHI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppSk());
-        } else {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getComaiotAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getComaiotAppSk());
-        }
-
         long timestamp = System.currentTimeMillis() / 1000;
         String nonce = StringUtils.get_bit_string(6);
-        String sign = StringUtils.sign(appSk, timestamp, nonce);
+        String sign = StringUtils.sign(sk, timestamp, nonce);
 
         PartnerWeixinPushNoticeParams params = new PartnerWeixinPushNoticeParams();
-        params.setAppak(appAk);
+        params.setAppak(ak);
         params.setTimestamp(System.currentTimeMillis() / 1000);
         params.setNonce(nonce);
         params.setSign(sign);
@@ -1503,79 +1113,12 @@ public class RetrofitUtil {
     }
 
     public void AppQueryPushAccountReq(Subscriber<AppQueryPushAccountEntity> subscriber) {
-
-        String appAk = "";
-        String appSk = "";
-
-        int clientId = 1;
-
-        clientId = ConfigProperties.getClientId();
-
-        if (clientId == YD) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getYdAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getYdAppSk());
-        } else if (clientId == GVS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getGvsAppSk());
-        } else if (clientId == FANGHUI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getFangHuiAppSk());
-        } else if (clientId == ZHOUYAYUN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getZhouYaYunAppSk());
-        } else if (clientId == KUNSHANG) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getKunShangAppSk());
-        } else if (clientId == DESHIMAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDeShiManAppSk());
-        } else if (clientId == MANYA) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getManYaAppSk());
-        } else if (clientId == AITE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getAiTeAppSk());
-        } else if (clientId == PHILIPS) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getPhilipsAppSk());
-        } else if (clientId == HONYAR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHonYanAppSk());
-        } else if (clientId == HUNE) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getHuNeAppSk());
-        } else if (clientId == RUOCHAN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRuoChanAppSk());
-        } else if (clientId == IWR) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIWRAppSk());
-        } else if (clientId == RUDOLPH) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getRUDOLPHAppSk());
-        } else if (clientId == DAYIN) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getDAYINAppSk());
-        } else if (clientId == LEIXUNKEWEI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getLEIXUNKEWEIAppSk());
-        } else if (clientId == IFLYTEK) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getIFLYTEKAppSk());
-        } else if (clientId == JIANSHI) {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getJIANSHIAppSk());
-        } else {
-            appAk = DESUtils.decryptString(CatEyePreferences.get().getComaiotAppAk());
-            appSk = DESUtils.decryptString(CatEyePreferences.get().getComaiotAppSk());
-        }
-
         long timestamp = System.currentTimeMillis() / 1000;
         String nonce = StringUtils.get_bit_string(6);
-        String sign = StringUtils.sign(appSk, timestamp, nonce);
+        String sign = StringUtils.sign(sk, timestamp, nonce);
 
         AppQueryPushAccountParams params = new AppQueryPushAccountParams();
-        params.setAppak(appAk);
+        params.setAppak(ak);
         params.setTimestamp(System.currentTimeMillis() / 1000);
         params.setNonce(nonce);
         params.setSign(sign);

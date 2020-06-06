@@ -88,22 +88,34 @@ import java.util.Map;
 
 @SuppressWarnings("all")
 public class CatEyeSDKInterface implements CatEyeView {
+
+    private static final boolean COMAIOT = false;
+
     private static CatEyeSDKInterface mInstance;
     private final MqttManagerInter mqttManager;
     private CatEyeController<CatEyeView> catEyeController;
     private Context mContext;
+    private final String mCountryCode;
+    private final String ak;
+    private final String sk;
     private CatEysListener catEysListener;
 
     private Map<String, DeviceSettings> mDeviceSettingsMap;
 
-    private CatEyeSDKInterface(Context context, String countryCode) throws NoAttachViewException, NoInternetException {
+    private CatEyeSDKInterface(Context context, String countryCode, String ak, String sk) throws NoAttachViewException, NoInternetException {
         if (null == context) {
             throw new RuntimeException("The Context is not support NULL");
         }
+        if (ak == null || sk == null || ak.isEmpty() || sk.isEmpty()) {
+            throw new RuntimeException("The AK/SK is empty.Not support Empty.Please contact COMAIOT get the AK/SK");
+        }
         this.mContext = context.getApplicationContext();
+        this.mCountryCode = countryCode;
+        this.ak = ak;
+        this.sk = sk;
         GeneralPreferences.init(context);
         CatEyePreferences.init(context);
-        RetrofitUtil.getInstance(mContext);
+        RetrofitUtil.getInstance(mContext, ak, sk);
         catEyeController = new CatEyeController<>();
         catEyeController.attachView(this);
 
@@ -126,17 +138,21 @@ public class CatEyeSDKInterface implements CatEyeView {
     }
 
     /**
+     * 初始化SDK
+     *
      * @param context     程序上下文
      * @param countryCode 城市代码，比如[中国-86] 传值就传86就可以
+     * @param ak          客户公钥      -由COMAIOT提供
+     * @param sk          客户私钥      -由COMAIOT提供
      * @return CatEyeSDKInterface实例    此类是单例模式
      * @throws NoAttachViewException
      * @throws NoInternetException
      */
-    public static CatEyeSDKInterface init(Context context, String countryCode) throws NoAttachViewException, NoInternetException {
+    public static CatEyeSDKInterface init(Context context, String countryCode, String ak, String sk) throws NoAttachViewException, NoInternetException {
         if (null == mInstance) {
             synchronized (CatEyeSDKInterface.class) {
                 if (null == mInstance) {
-                    mInstance = new CatEyeSDKInterface(context, countryCode);
+                    mInstance = new CatEyeSDKInterface(context, countryCode, ak, sk);
                 }
             }
         }
@@ -182,6 +198,9 @@ public class CatEyeSDKInterface implements CatEyeView {
         }
     }
 
+    /**
+     * @param catEysListener SDK所有事件监听回调
+     */
     public void setCatEyeMessageListener(CatEysListener catEysListener) {
         this.catEysListener = catEysListener;
         mqttManager.setCallBack(catEysListener);
@@ -197,6 +216,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @param email       邮件地址
      */
     public void bindPhoneNumber(String phoneNumber, String verifyCode, String password, String nickname, String email, BindPhoneView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.bindPhoneNumber(phoneNumber, verifyCode, password, nickname, email, reqView);
     }
 
@@ -210,6 +230,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see LoginType
      */
     public void queryAccount(String type, String email, String phoneNumber, String weChatCode, AppQueryAccountReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.AppQueryAccountReq(type, email, phoneNumber, weChatCode, reqView);
     }
 
@@ -241,6 +262,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppSubscribeReqView
      */
     public void loginForPassword(String phoneNumber, String password, String pushId, AppSubscribeReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.login(phoneNumber, password, pushId, LoginType.PASSWORD, null, null, null, reqView);
     }
 
@@ -256,6 +278,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppSubscribeReqView
      */
     public void loginForVerifyCode(String phoneNumber, String verifyCode, String pushId, AppSubscribeReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.login(phoneNumber, null, pushId, LoginType.PHONE, verifyCode, null, null, reqView);
     }
 
@@ -271,6 +294,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppSubscribeReqView
      */
     public void loginForWeChat(String phoneNumber, String weChatCode, String pushId, AppSubscribeReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.login(phoneNumber, null, pushId, LoginType.WECHAT, null, weChatCode, "APP", reqView);
     }
 
@@ -286,6 +310,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppEmailSubScribeReqView
      */
     public void loginForEmail(String email, String password, String pushId, AppEmailSubScribeReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.loginEmail(email, password, pushId, reqView);
     }
 
@@ -298,6 +323,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppUnSubscribeReqView
      */
     public void logOut(AppUnSubscribeReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.AppUnSubscribeReq(reqView);
     }
 
@@ -324,6 +350,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppChangePasswordReqView
      */
     public void changePassword(String oldPassword, String newPassword, AppChangePasswordReqView reqView) {
+        if (!COMAIOT) return;
         catEyeController.AppChangePasswordReq(oldPassword, newPassword, reqView);
     }
 
@@ -339,6 +366,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppResetPasswordByPhoneReqView
      */
     public void resetPasswordByPhone(String phoneNumber, String verifyCode, String password, AppResetPasswordByPhoneReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.AppResetPasswordByPhoneReq(phoneNumber, verifyCode, password, reqView);
     }
 
@@ -354,6 +382,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppResetPasswordByEmailReqView
      */
     public void resetPasswordByEmail(String email, String verifyCode, String password, AppResetPasswordByEmailReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.AppResetPasswordByEmailReq(email, verifyCode, password, reqView);
     }
 
@@ -370,6 +399,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppChangeAccountInfoReqView
      */
     public void changeAccountInfo(String email, String avatar, String pushId, String nickName, AppChangeAccountInfoReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.AppChangeAccountInfoReq(email, avatar, pushId, nickName, reqView);
     }
 
@@ -386,6 +416,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppChangePhoneReqView
      */
     public void changePhoneNumber(String oldPhoneNumber, String oldVerifyCode, String newPhoneNumber, String newVerifyCode, AppChangePhoneReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.AppChangePhoneReq(oldPhoneNumber, oldVerifyCode, newPhoneNumber, newVerifyCode, reqView);
     }
 
@@ -401,6 +432,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppBindWeixinReqView
      */
     public void bindWeChat(String phoneNumber, String verifyCode, String weChatCode, AppBindWeixinReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.AppBindWeixinReq(phoneNumber, verifyCode, weChatCode, reqView);
     }
 
@@ -418,6 +450,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppBindEmailReqView
      */
     public void bindEmail(String email, String verifyCode, String password, String phoneNumber, String nickName, AppBindEmailReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.bindEmail(email, verifyCode, password, phoneNumber, nickName, reqView);
     }
 
@@ -430,6 +463,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppRemoveAccountReqView
      */
     public void removeAccount(AppRemoveAccountReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.removeAccount(reqView);
     }
 
@@ -455,6 +489,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppUploadConfigReqView
      */
     public void uploadCustomConfig(String config, AppUploadConfigReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.uploadConfig(config, reqView);
     }
 
@@ -467,6 +502,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppDownloadConfigReqView
      */
     public void getCustomConfig(AppDownloadConfigReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.getConfig(reqView);
     }
 
@@ -913,6 +949,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see PartnerWeixinPushConfigReqView
      */
     public void setWeChatPush(String weChatAccountid, String weChatOpenid, String weChatUnionid, int pushOnOff, PartnerWeixinPushConfigReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.setWeChatPush(weChatAccountid, weChatOpenid, weChatUnionid, pushOnOff, reqView);
     }
 
@@ -928,6 +965,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see PartnerWeixinPushNoticeReqView
      */
     public void notificationWeChat(String weChatAccountid, String weChatOpenidList, String content, PartnerWeixinPushNoticeReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.notificationWeChat(weChatAccountid, weChatOpenidList, content, reqView);
     }
 
@@ -1044,6 +1082,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see SmsTokenReqView
      */
     public void sendSms(String phoneNumber, String signName, SmsTokenReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.smsToPhone(phoneNumber, signName, reqView);
     }
 
@@ -1057,6 +1096,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see EmailTokenReqView
      */
     public void sendEmail(String email, EmailTokenReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.sendEmail(email, reqView);
     }
 
@@ -1169,6 +1209,11 @@ public class CatEyeSDKInterface implements CatEyeView {
         catEyeController.AppQueryPushAccountReq(reqView);
     }
 
+    /**
+     * 远程查看音视频
+     *
+     * @param devUid 设备的devUid
+     */
     public void openDeviceVideo(String devUid) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         CmdInfo cmdInfo = new CmdInfo();
@@ -1179,6 +1224,11 @@ public class CatEyeSDKInterface implements CatEyeView {
         mqttManager.publish(topic, json, false, 2);
     }
 
+    /**
+     * 重启设备
+     *
+     * @param devUid 设备的devUid
+     */
     public void restartDevice(String devUid) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         DeviceRestartEvent restartEvent = new DeviceRestartEvent();
@@ -1188,6 +1238,11 @@ public class CatEyeSDKInterface implements CatEyeView {
         mqttManager.publish(topic, json, false, 2);
     }
 
+    /**
+     * 获取设备属性
+     *
+     * @param devUid 设备的devUid
+     */
     public void getDeviceSettings(String devUid) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         DeviceSettings deviceSettings = new DeviceSettings();
@@ -1196,6 +1251,13 @@ public class CatEyeSDKInterface implements CatEyeView {
         mqttManager.publish(topic, json, false, 2);
     }
 
+    /**
+     * 设置设备属性
+     *
+     * @param devUid         设备的devUid
+     * @param deviceSettings 设备属性的类
+     * @see DeviceSettings
+     */
     public void settingDevice(String devUid, DeviceSettings deviceSettings) {
 
         SetDeviceSettingEntity entity = new SetDeviceSettingEntity();
@@ -1232,6 +1294,11 @@ public class CatEyeSDKInterface implements CatEyeView {
         mqttManager.publish(topic, json, false, 2);
     }
 
+    /**
+     * 查询设备的在线状态 两次请求时间间隔必须>=150
+     *
+     * @param devUid 设备的devUid
+     */
     public void queryDeviceOnline(String devUid) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         DeviceOnlineEvent deviceSettings = new DeviceOnlineEvent();
@@ -1241,6 +1308,8 @@ public class CatEyeSDKInterface implements CatEyeView {
     }
 
     /**
+     * 切换设备的工作模式    [0-2]
+     *
      * @param devUid
      * @param work_Mode 0省电模式 1标准模式 2智能省电模式 晚10点-早7点休眠
      */
@@ -1263,6 +1332,12 @@ public class CatEyeSDKInterface implements CatEyeView {
         }
     }
 
+    /**
+     * 订阅已绑定设备的事件消息通道
+     *
+     * @param devUids  已绑定设备的devUid数组
+     * @param listener 订阅结果回调
+     */
     public void subscribe(String[] devUids, IMqttActionListener listener) {
         if (null == devUids || devUids.length == 0) {
             Logger.dd("[subscribe] but devUids is empty.");
@@ -1295,7 +1370,7 @@ public class CatEyeSDKInterface implements CatEyeView {
         }
     }
 
-    public Map<String, DeviceSettings> getCacheMap() {
+    protected Map<String, DeviceSettings> getCacheMap() {
         return mDeviceSettingsMap;
     }
 }
