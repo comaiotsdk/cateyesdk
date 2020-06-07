@@ -41,6 +41,51 @@ public class AppRefreshTokenEntity {
     }
 
     public static class Content implements Serializable {
-        //TODO
+        private String app_uid;
+        private String app_envid;
+        private String token;
+        private long expire;
+
+        public String getApp_uid() {
+            return app_uid;
+        }
+
+        public void setApp_uid(String app_uid) {
+            this.app_uid = app_uid;
+        }
+
+        public String getApp_envid() {
+            return app_envid;
+        }
+
+        public void setApp_envid(String app_envid) {
+            this.app_envid = app_envid;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+
+        public long getExpire() {
+            return expire;
+        }
+
+        public void setExpire(long expire) {
+            this.expire = expire;
+        }
+
+        @Override
+        public String toString() {
+            return "Content{" +
+                    "app_uid='" + app_uid + '\'' +
+                    ", app_envid='" + app_envid + '\'' +
+                    ", token='" + token + '\'' +
+                    ", expire=" + expire +
+                    '}';
+        }
     }
 }

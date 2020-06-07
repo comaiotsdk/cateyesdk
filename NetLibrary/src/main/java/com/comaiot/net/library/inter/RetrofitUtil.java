@@ -8,6 +8,7 @@ import android.util.Base64;
 
 import com.comaiot.net.library.Model.DESUtils;
 import com.comaiot.net.library.bean.ArogaBean;
+import com.comaiot.net.library.core.CatEyeSDKInterface;
 import com.comaiot.net.library.utils.Logger;
 import com.comaiot.net.library.req_params.ArogaLicensesParams;
 import com.comaiot.net.library.bean.AppAidEntity;
@@ -348,6 +349,7 @@ public class RetrofitUtil {
     }
 
     public void bindPhone(Subscriber<BindPhoneEntity> subscriber, String phone_num, String verify_code, String password, String nickname, String email) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         BindPhoneParams params = new BindPhoneParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -368,6 +370,7 @@ public class RetrofitUtil {
     }
 
     public void AppQueryAccountReq(Subscriber<AppQueryAccountEntity> subscriber, String type, String email, String phoneNumber, String weChatCode) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppQueryAccountParams params = new AppQueryAccountParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -388,6 +391,7 @@ public class RetrofitUtil {
     }
 
     public void login(Subscriber<AppSubscribeEntity> subscriber, String phoneNumber, String password, String pushId, String subscribeType, String verify_code, String weixin_code, String weixin_type) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         long timestamp = System.currentTimeMillis() / 1000;
         String nonce = StringUtils.get_bit_string(6);
         String sign = StringUtils.sign(sk, timestamp, nonce);
@@ -417,6 +421,7 @@ public class RetrofitUtil {
     }
 
     public void loginEmail(Subscriber<AppSubscribeEntity> subscriber, String email, String password, String pushId) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         long timestamp = System.currentTimeMillis() / 1000;
         String nonce = StringUtils.get_bit_string(6);
         String sign = StringUtils.sign(sk, timestamp, nonce);
@@ -443,6 +448,7 @@ public class RetrofitUtil {
     }
 
     public void AppUnSubscribeReq(Subscriber<AppUnSubscribeEntity> subscriber) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppUnSubscribeParams params = new AppUnSubscribeParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -477,6 +483,7 @@ public class RetrofitUtil {
     }
 
     public void AppChangePasswordReq(Subscriber<AppChangePasswordEntity> subscriber, String old_password, String new_password) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppChangePasswordParams params = new AppChangePasswordParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -495,6 +502,7 @@ public class RetrofitUtil {
     }
 
     public void AppResetPasswordByPhoneReq(Subscriber<AppResetPasswordByPhoneEntity> subscriber, String phoneNumber, String verifyCode, String password) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppResetPasswordByPhoneParams params = new AppResetPasswordByPhoneParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -514,6 +522,7 @@ public class RetrofitUtil {
     }
 
     public void AppResetPasswordByEmailReq(Subscriber<AppResetPasswordByEmailEntity> subscriber, String phoneNumber, String verifyCode, String password) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppResetPasswordByPhoneParams params = new AppResetPasswordByPhoneParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -533,6 +542,7 @@ public class RetrofitUtil {
     }
 
     public void AppChangeAccountInfoReq(Subscriber<AppChangeAccountInfoEntity> subscriber, String email, String avatar, String push_id, String nickname) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppChangeAccountInfoParams params = new AppChangeAccountInfoParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -554,6 +564,7 @@ public class RetrofitUtil {
     }
 
     public void AppChangePhoneReq(Subscriber<AppChangePhoneEntity> subscriber, String old_phone_num, String old_verify_code, String new_phone_num, String new_verify_code) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppChangePhoneParams params = new AppChangePhoneParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -574,6 +585,7 @@ public class RetrofitUtil {
     }
 
     public void AppBindWeixinReq(Subscriber<AppBindWeixinEntity> subscriber, String phoneNumber, String verifyCode, String weixin_code) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppBindWeixinParams params = new AppBindWeixinParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -592,6 +604,7 @@ public class RetrofitUtil {
     }
 
     public void bindEmail(Subscriber<AppBindEmailEntity> subscriber, String email, String verifyCode, String password, String phoneNumber, String nickName) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppBindEmailParams params = new AppBindEmailParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -612,6 +625,7 @@ public class RetrofitUtil {
     }
 
     public void removeAccount(Subscriber<AppRemoveAccountEntity> subscriber) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppRemoveAccountParams params = new AppRemoveAccountParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -647,6 +661,7 @@ public class RetrofitUtil {
     }
 
     public void uploadConfig(Subscriber<AppUploadConfigEntity> subscriber, String config) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppUploadConfigParams params = new AppUploadConfigParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -665,6 +680,7 @@ public class RetrofitUtil {
     }
 
     public void getConfig(Subscriber<AppDownloadConfigEntity> subscriber) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppDownloadConfigParams params = new AppDownloadConfigParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -709,25 +725,6 @@ public class RetrofitUtil {
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
 
         mCatEyeService.AppRemoveSharedDeviceReq(requestBody)
-                .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber);
-    }
-
-    public void getDeviceConfig(Subscriber<AppDownloadDevConfigEntity> subscriber, String aid, String devUid) {
-        AppDownloadDevConfigParams params = new AppDownloadDevConfigParams();
-        params.setApp_uid(CatEyePreferences.get().getAppUid());
-        params.setApp_envid(CatEyePreferences.get().getAppEnvid());
-        params.setToken(CatEyePreferences.get().getToken());
-        params.setApp_aid(aid);
-        params.setDev_uid(devUid);
-
-        String json = GsonUtils.toJson(params);
-        Logger.ee("getDeviceConfig Json : \n" + json);
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
-
-        mCatEyeService.getDeviceConfig(requestBody)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -829,25 +826,6 @@ public class RetrofitUtil {
                 .subscribe(subscriber);
     }
 
-    public void AppReceiveShareReq(Subscriber<AppReceiveShareEntity> subscriber, String receive_type, String share_num, String share_token) {
-        AppReceiveShareParams params = new AppReceiveShareParams();
-        params.setApp_uid(CatEyePreferences.get().getAppUid());
-        params.setApp_envid(CatEyePreferences.get().getAppEnvid());
-        params.setToken(CatEyePreferences.get().getToken());
-        params.setReceive_type(receive_type);
-        params.setShare_num(share_num);
-        params.setShare_token(share_token);
-        String json = GsonUtils.toJson(params);
-        Logger.ee("AppReceiveShareReq Json : \n" + json);
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
-
-        mCatEyeService.AppReceiveShareReq(requestBody)
-                .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber);
-    }
-
     public void AppQuerySharedDeviceReq(Subscriber<AppQuerySharedDeviceEntity> subscriber, String aid) {
         AppRemoveMessageReqParams params = new AppRemoveMessageReqParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
@@ -894,6 +872,7 @@ public class RetrofitUtil {
     }
 
     public void setWeChatPush(Subscriber<PartnerWeixinPushConfigEntity> subscriber, String weixin_accountid, String weixin_openid, String weixin_unionid, int push_on_off) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         long timestamp = System.currentTimeMillis() / 1000;
         String nonce = StringUtils.get_bit_string(6);
         String sign = StringUtils.sign(sk, timestamp, nonce);
@@ -920,6 +899,7 @@ public class RetrofitUtil {
     }
 
     public void notificationWeChat(Subscriber<PartnerWeixinPushNoticeEntity> subscriber, String weChatAccountid, String weChatOpenidList, String content) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         long timestamp = System.currentTimeMillis() / 1000;
         String nonce = StringUtils.get_bit_string(6);
         String sign = StringUtils.sign(sk, timestamp, nonce);
@@ -1006,6 +986,7 @@ public class RetrofitUtil {
     }
 
     public void smsToPhone(Subscriber<SmsEntity> subscriber, String phone_num, String signName) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         SmsParams params = new SmsParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setPhone_num(phone_num);
@@ -1098,6 +1079,7 @@ public class RetrofitUtil {
     }
 
     public void sendEmail(Subscriber<EmailTokenEntity> subscriber, String email) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         EmailTokenReqParams params = new EmailTokenReqParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());

@@ -114,6 +114,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.login(phoneNumber, password, pushId, subscribe_type, verify_code, weixin_code, weixin_type, new CallBack<AppSubscribeEntity>() {
             @Override
             public void onStart() {
@@ -136,7 +137,7 @@ public class CatEyeController<V extends CatEyeView> {
             @Override
             public void onSuccess(AppSubscribeEntity data) {
                 if (isViewAttached() && null != reqView)
-                    reqView.onSubscribeSuccess();
+                    reqView.onSubscribeSuccess(data.getContent().getExpire());
             }
         });
     }
@@ -148,6 +149,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.loginEmail(email, password, pushId, new CallBack<AppSubscribeEntity>() {
             @Override
             public void onStart() {
@@ -182,6 +184,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.AppUnSubscribeReq(new CallBack<AppUnSubscribeEntity>() {
             @Override
             public void onStart() {
@@ -240,7 +243,7 @@ public class CatEyeController<V extends CatEyeView> {
             @Override
             public void onSuccess(AppRefreshTokenEntity data) {
                 if (isViewAttached() && null != reqView) {
-                    reqView.onRefreshTokenSuccess(data);
+                    reqView.onRefreshTokenSuccess(data.getContent().getExpire());
                 }
             }
         });
@@ -250,7 +253,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             return;
         }
-
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.AppChangePasswordReq(old_password, new_password, new CallBack<AppChangePasswordEntity>() {
             @Override
             public void onStart() {
@@ -286,6 +289,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.AppResetPasswordByPhoneReq(phoneNumber, verifyCode, password, new CallBack<AppResetPasswordByPhoneEntity>() {
             @Override
             public void onStart() {
@@ -320,6 +324,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.AppResetPasswordByEmailReq(phoneNumber, verifyCode, password, new CallBack<AppResetPasswordByEmailEntity>() {
             @Override
             public void onStart() {
@@ -354,7 +359,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
-
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.AppChangeAccountInfoReq(email, avatar, push_id, nickname, new CallBack<AppChangeAccountInfoEntity>() {
             @Override
             public void onStart() {
@@ -390,7 +395,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
-
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.AppChangePhoneReq(old_phone_num, old_verify_code, new_phone_num, new_verify_code, new CallBack<AppChangePhoneEntity>() {
             @Override
             public void onStart() {
@@ -426,6 +431,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.AppBindWeixinReq(phoneNumber, verifyCode, weixin_code, new CallBack<AppBindWeixinEntity>() {
             @Override
             public void onStart() {
@@ -460,7 +466,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
-
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.bindEmail(email, verifyCode, password, phoneNumber, nickName, new CallBack<AppBindEmailEntity>() {
             @Override
             public void onStart() {
@@ -495,7 +501,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
-
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.removeAccount(new CallBack<AppRemoveAccountEntity>() {
             @Override
             public void onStart() {
@@ -567,7 +573,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
-
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.uploadConfig(config, new CallBack<AppUploadConfigEntity>() {
             @Override
             public void onStart() {
@@ -603,7 +609,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
-
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.getConfig(new CallBack<AppDownloadConfigEntity>() {
             @Override
             public void onStart() {
@@ -697,42 +703,6 @@ public class CatEyeController<V extends CatEyeView> {
             public void onSuccess(AppRemoveSharedDeviceEntity data) {
                 if (isViewAttached() && null != ReqView) {
                     ReqView.onAppRemoveSharedDeviceSuccess(data);
-                }
-            }
-        });
-    }
-
-    public void getDeviceConfig(String aid, String devUid, AppDownloadDevConfigReqView reqView) throws NoInternetException, NoAttachViewException {
-        if (!AppUtils.isHaveInternet(CatEyeSDKInterface.get().getContext())) {
-            throw new NoInternetException();
-        }
-        if (!isViewAttached()) {
-            throw new NoAttachViewException();
-        }
-
-        CatEyeModel.getDeviceConfig(aid, devUid, new CallBack<AppDownloadDevConfigEntity>() {
-            @Override
-            public void onStart() {
-                if (isViewAttached() && null != reqView)
-                    reqView.showLoading();
-            }
-
-            @Override
-            public void onComplete() {
-                if (isViewAttached() && null != reqView)
-                    reqView.hideLoading();
-            }
-
-            @Override
-            public void onError(String msg) {
-                if (isViewAttached() && null != reqView)
-                    reqView.onRequestError(msg, "getDeviceConfig");
-            }
-
-            @Override
-            public void onSuccess(AppDownloadDevConfigEntity data) {
-                if (isViewAttached() && null != reqView) {
-                    reqView.onGetDeviceConfigSuccess(data);
                 }
             }
         });
@@ -915,42 +885,6 @@ public class CatEyeController<V extends CatEyeView> {
         });
     }
 
-    public void AppReceiveShareReq(String receive_type, String share_num, String share_token, AppReceiveShareReqView reqView) throws NoInternetException, NoAttachViewException {
-        if (!AppUtils.isHaveInternet(CatEyeSDKInterface.get().getContext())) {
-            throw new NoInternetException();
-        }
-        if (!isViewAttached()) {
-            throw new NoAttachViewException();
-        }
-
-        CatEyeModel.AppReceiveShareReq(receive_type, share_num, share_token, new CallBack<AppReceiveShareEntity>() {
-            @Override
-            public void onStart() {
-                if (isViewAttached() && null != reqView)
-                    reqView.showLoading();
-            }
-
-            @Override
-            public void onComplete() {
-                if (isViewAttached() && null != reqView)
-                    reqView.hideLoading();
-            }
-
-            @Override
-            public void onError(String msg) {
-                if (isViewAttached() && null != reqView)
-                    reqView.onRequestError(msg, "joinScanShareDeviceQr");
-            }
-
-            @Override
-            public void onSuccess(AppReceiveShareEntity data) {
-                if (isViewAttached() && null != reqView) {
-                    reqView.onAppReceiveShareReqSuccess(data);
-                }
-            }
-        });
-    }
-
     public void getShareDevice(String aid, AppQuerySharedDeviceReqView reqView) throws NoAttachViewException, NoInternetException {
         if (!AppUtils.isHaveInternet(CatEyeSDKInterface.get().getContext())) {
             throw new NoInternetException();
@@ -1018,7 +952,7 @@ public class CatEyeController<V extends CatEyeView> {
             @Override
             public void onSuccess(AppSubscribeEntity data) {
                 if (isViewAttached())
-                    reqView.onSubscribeSuccess();
+                    reqView.onSubscribeSuccess(data.getContent().getExpire());
             }
         });
     }
@@ -1030,6 +964,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.setWeChatPush(weChatAccountid, weChatOpenid, weChatUnionid, pushOnOff, new CallBack<PartnerWeixinPushConfigEntity>() {
             @Override
             public void onStart() {
@@ -1064,6 +999,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.notificationWeChat(weChatAccountid, weChatOpenidList, content, new CallBack<PartnerWeixinPushNoticeEntity>() {
             @Override
             public void onStart() {
@@ -1298,7 +1234,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
-
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.smsToPhone(phone_num, signName, new CallBack<SmsEntity>() {
             @Override
             public void onStart() {
@@ -1343,6 +1279,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.AppQueryAccountReq(type, email, phoneNumber, weChatCode, new CallBack<AppQueryAccountEntity>() {
             @Override
             public void onStart() {
@@ -1377,6 +1314,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.bindPhone(phone_num, verify_code, password, nickname, email, new CallBack<BindPhoneEntity>() {
             @Override
             public void onStart() {
@@ -1433,7 +1371,7 @@ public class CatEyeController<V extends CatEyeView> {
             public void onSuccess(AppSubscribeEntity data) {
                 Log.e("LoginByPassword", "CatEyeController LoginByPassword onSuccess:" + data.toString());
                 if (isViewAttached())
-                    ((AppSubscribeReqView) iMvpView).onSubscribeSuccess();
+                    ((AppSubscribeReqView) iMvpView).onSubscribeSuccess(data.getContent().getExpire());
             }
         });
     }
@@ -1464,7 +1402,7 @@ public class CatEyeController<V extends CatEyeView> {
             @Override
             public void onSuccess(AppSubscribeEntity data) {
                 if (isViewAttached())
-                    ((AppSubscribeReqView) iMvpView).onSubscribeSuccess();
+                    ((AppSubscribeReqView) iMvpView).onSubscribeSuccess(data.getContent().getExpire());
             }
         });
     }
@@ -1495,7 +1433,7 @@ public class CatEyeController<V extends CatEyeView> {
             @Override
             public void onSuccess(AppSubscribeEntity data) {
                 if (isViewAttached())
-                    ReqView.onSubscribeSuccess();
+                    ReqView.onSubscribeSuccess(data.getContent().getExpire());
             }
         });
     }
@@ -1577,7 +1515,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
-
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.sendEmail(email, new CallBack<EmailTokenEntity>() {
             @Override
             public void onStart() {

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-public class QueryCountryCodeEntity extends BaseAppEntity {
+public class QueryCountryCodeEntity implements Serializable {
     private int errcode;
     private String errmsg;
     private Content content;
@@ -17,22 +17,18 @@ public class QueryCountryCodeEntity extends BaseAppEntity {
         this.content = content;
     }
 
-    @Override
     public int getErrcode() {
         return errcode;
     }
 
-    @Override
     public void setErrcode(int errcode) {
         this.errcode = errcode;
     }
 
-    @Override
     public String getErrmsg() {
         return errmsg;
     }
 
-    @Override
     public void setErrmsg(String errmsg) {
         this.errmsg = errmsg;
     }

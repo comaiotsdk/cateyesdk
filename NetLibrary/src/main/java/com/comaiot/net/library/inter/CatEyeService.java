@@ -8,6 +8,7 @@ import com.comaiot.net.library.bean.AppChangeAccountInfoEntity;
 import com.comaiot.net.library.bean.AppChangePasswordEntity;
 import com.comaiot.net.library.bean.AppChangePhoneEntity;
 import com.comaiot.net.library.bean.AppDownloadConfigEntity;
+import com.comaiot.net.library.bean.AppDownloadFileEntity;
 import com.comaiot.net.library.bean.AppQueryAccountEntity;
 import com.comaiot.net.library.bean.AppQueryAidBindEntity;
 import com.comaiot.net.library.bean.AppQueryDevConnectEntity;
@@ -106,9 +107,6 @@ public interface CatEyeService {
     @POST("api/v2/AppRemoveSharedDeviceReq")
     Observable<AppRemoveSharedDeviceEntity> AppRemoveSharedDeviceReq(@Body RequestBody body);
 
-    @POST("api/v2/AppDownloadDevConfigReq")
-    Observable<AppDownloadDevConfigEntity> getDeviceConfig(@Body RequestBody body);
-
     @POST("api/v2/AppQueryDevConnectReq")
     Observable<AppQueryDevConnectEntity> AppQueryDevConnectReq(@Body RequestBody body);
 
@@ -123,9 +121,6 @@ public interface CatEyeService {
 
     @POST("api/v2/AppShareDeviceReq")
     Observable<AppShareDeviceEntity> AppShareDeviceReq(@Body RequestBody body);
-
-    @POST("api/v2/AppReceiveShareReq")
-    Observable<AppReceiveShareEntity> AppReceiveShareReq(@Body RequestBody body);
 
     @POST("api/v2/AppQuerySharedDeviceReq")
     Observable<AppQuerySharedDeviceEntity> AppQuerySharedDeviceReq(@Body RequestBody body);

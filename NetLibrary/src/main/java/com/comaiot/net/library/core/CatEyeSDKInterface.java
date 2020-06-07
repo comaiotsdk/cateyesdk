@@ -2,8 +2,11 @@ package com.comaiot.net.library.core;
 
 import android.content.Context;
 
+import com.comaiot.net.library.bean.AppControlDevice;
+import com.comaiot.net.library.bean.AppReceiveShareEntity;
 import com.comaiot.net.library.bean.CmdInfo;
 import com.comaiot.net.library.bean.DeviceStatusChangeEntity;
+import com.comaiot.net.library.bean.DeviceSvrCacheSettings;
 import com.comaiot.net.library.bean.GetDeviceStatusEntity;
 import com.comaiot.net.library.bean.SetDeviceSettingEntity;
 import com.comaiot.net.library.controller.AppUtils;
@@ -49,6 +52,8 @@ import com.comaiot.net.library.bean.PartNerQueryDeviceEntity;
 import com.comaiot.net.library.bean.QueryCountryCodeEntity;
 import com.comaiot.net.library.prfs.CatEyePreferences;
 import com.comaiot.net.library.prfs.GeneralPreferences;
+import com.comaiot.net.library.req_params.AppDownloadDevConfigEntity;
+import com.comaiot.net.library.req_params.AppDownloadDevConfigParams;
 import com.comaiot.net.library.req_params.AppDownloadFileParams;
 import com.comaiot.net.library.controller.view.AppAidReqView;
 import com.comaiot.net.library.controller.view.AppBindEmailReqView;
@@ -69,6 +74,7 @@ import com.comaiot.net.library.controller.view.AppResetPasswordByPhoneReqView;
 import com.comaiot.net.library.controller.view.AppUploadConfigReqView;
 import com.comaiot.net.library.controller.view.PartNerQueryDeviceListReqView;
 import com.comaiot.net.library.controller.view.QueryCountryCodeReqView;
+import com.comaiot.net.library.req_params.AppReceiveShareParams;
 import com.comaiot.net.library.req_params.AppRemoveAccountParams;
 import com.comaiot.net.library.utils.Logger;
 
@@ -80,6 +86,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -89,7 +96,7 @@ import java.util.Map;
 @SuppressWarnings("all")
 public class CatEyeSDKInterface implements CatEyeView {
 
-    private static final boolean COMAIOT = false;
+    public static final boolean COMAIOT = false;
 
     private static CatEyeSDKInterface mInstance;
     private final MqttManagerInter mqttManager;
@@ -113,6 +120,7 @@ public class CatEyeSDKInterface implements CatEyeView {
         this.mCountryCode = countryCode;
         this.ak = ak;
         this.sk = sk;
+
         GeneralPreferences.init(context);
         CatEyePreferences.init(context);
         RetrofitUtil.getInstance(mContext, ak, sk);
@@ -543,7 +551,80 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppDownloadDevConfigReqView
      */
     public void getDeviceConfig(String aid, String devUid, AppDownloadDevConfigReqView reqView) throws NoAttachViewException, NoInternetException {
-        catEyeController.getDeviceConfig(aid, devUid, reqView);
+        String postUrl = "/api/v2/AppDownloadDevConfigReq";
+
+        AppDownloadDevConfigParams params = new AppDownloadDevConfigParams();
+        params.setApp_uid(CatEyePreferences.get().getAppUid());
+        params.setApp_envid(CatEyePreferences.get().getAppEnvid());
+        params.setToken(CatEyePreferences.get().getToken());
+        params.setApp_aid(aid);
+        params.setDev_uid(devUid);
+        String json = GsonUtils.toJson(params);
+
+        Logger.dd("[getDeviceConfig] json: " + json);
+
+        OkHttpUtils.getInstance(mContext).post(json, postUrl, new OkHttpCallback() {
+            @Override
+            public void onSuccess(JSONObject oriData) {
+                try {
+                    int errcode = oriData.getInt("errcode");
+                    String errmsg = oriData.getString("errmsg");
+                    if (errcode != 0 && null != catEysListener && null != reqView) {
+                        catEysListener.onHttpRequestFailed("getDeviceConfig", "The Server is return " + errcode + " , errMsg is " + errmsg);
+                        reqView.onRequestError("" + errcode, "getDeviceEventList");
+                        return;
+                    }
+
+                    AppDownloadDevConfigEntity entity = new AppDownloadDevConfigEntity();
+                    entity.setErrcode(errcode);
+                    entity.setErrmsg(errmsg);
+
+                    try {
+                        JSONObject jsonObject = oriData.getJSONObject("content");
+
+                        int num = jsonObject.getInt("num");
+                        if (num > 0) {
+                            JSONObject list = jsonObject.getJSONObject("list");
+
+                            List<AppDownloadDevConfigEntity.Content> contents = new ArrayList<>();
+
+                            Iterator<String> keys = list.keys();
+                            while (keys.hasNext()) {
+                                String next = keys.next();
+                                JSONObject listJSONObject = list.getJSONObject(next);
+                                AppDownloadDevConfigEntity.Content content = GsonUtils.fromJson(listJSONObject.toString(), AppDownloadDevConfigEntity.Content.class);
+                                content.setSettings(GsonUtils.fromJson(new String(Base64.getDecoder().decode(content.getConfig())), DeviceSvrCacheSettings.class));
+                                contents.add(content);
+                            }
+
+                            entity.setContents(contents);
+                        } else {
+                            entity.setContents(new ArrayList<>());
+                        }
+                        if (null != reqView) {
+                            reqView.onGetDeviceConfigSuccess(entity);
+                        }
+                    } catch (Exception e) {
+                        entity.setContents(new ArrayList<>());
+                        if (null != reqView) {
+                            reqView.onGetDeviceConfigSuccess(entity);
+                        }
+                        return;
+                    }
+                } catch (JSONException e) {
+                    if (null != catEysListener) {
+                        catEysListener.onHttpRequestFailed("getDeviceConfig", e.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                if (null != catEysListener) {
+                    catEysListener.onHttpRequestFailed("getDeviceEventList", e.toString());
+                }
+            }
+        });
     }
 
     /**
@@ -568,21 +649,23 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @param reqView 请求回调
      * @see AppDownloadFileReqView
      */
-    public void getDeviceEventList(String aid, String devUid, AppDownloadFileReqView reqView) throws NoInternetException {
+    public void getDeviceEventList(String aid, String devUid, long bindDate, AppDownloadFileReqView reqView) throws NoInternetException {
         if (!AppUtils.isHaveInternet(CatEyeSDKInterface.get().getContext())) {
             throw new NoInternetException();
         }
 
-        String postUrl = "/api/v2/AppQueryDevConnectReq";
+        String postUrl = "/api/v2/AppDownloadFileReq";
 
         AppDownloadFileParams params = new AppDownloadFileParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
         params.setToken(CatEyePreferences.get().getToken());
         params.setApp_aid(aid);
-        params.setTimestamp(System.currentTimeMillis() / 1000);
+        params.setTimestamp(bindDate);
         params.setDev_uid(devUid);
         String json = GsonUtils.toJson(params);
+
+        Logger.dd("[getDeviceEventList] json: " + json);
 
         OkHttpUtils.getInstance(mContext).post(json, postUrl, new OkHttpCallback() {
             @Override
@@ -592,16 +675,15 @@ public class CatEyeSDKInterface implements CatEyeView {
                     String errmsg = oriData.getString("errmsg");
                     if (errcode != 0 && null != catEysListener && null != reqView) {
                         catEysListener.onHttpRequestFailed("getDeviceEventList", "The Server is return " + errcode + " , errMsg is " + errmsg);
-                        reqView.onRequestError("The Server is return " + errcode + " , errMsg is " + errmsg, "getDeviceEventList");
+                        reqView.onRequestError("" + errcode , "getDeviceEventList");
                         return;
                     }
                     JSONObject jsonObject = oriData.getJSONObject("content");
-                    int recordsLimit = oriData.getInt("RecordsLimit");
-                    long timestamp_start = oriData.getLong("timestamp_start");
-                    long timestamp_end = oriData.getLong("timestamp_end");
+
                     int num = jsonObject.getInt("num");
-                    JSONObject listObject = jsonObject.getJSONObject("list");
-                    Iterator<String> keys = listObject.keys();
+                    int recordsLimit = jsonObject.getInt("RecordsLimit");
+                    long timestamp_start = jsonObject.getLong("timestamp_start");
+                    long timestamp_end = jsonObject.getLong("timestamp_end");
 
                     DeviceEventEntity eventEntity = new DeviceEventEntity();
                     eventEntity.setErrcode(errcode);
@@ -611,12 +693,17 @@ public class CatEyeSDKInterface implements CatEyeView {
                     eventEntity.setTimestamp_end(timestamp_end);
                     List<DeviceEventListEntity> listEntities = new ArrayList<>();
 
-                    while (keys.hasNext()) {
-                        String key = keys.next();
-                        JSONObject beanObject = listObject.getJSONObject(key);
-                        DeviceEventListEntity entity = GsonUtils.fromJson(beanObject.toString(), DeviceEventListEntity.class);
-                        listEntities.add(entity);
+                    if (num > 0) {
+                        JSONObject object = jsonObject.getJSONObject("list");
+                        Iterator<String> keys = object.keys();
+                        while (keys.hasNext()) {
+                            String next = keys.next();
+                            JSONObject objectJSONObject = object.getJSONObject(next);
+                            DeviceEventListEntity entity = GsonUtils.fromJson(objectJSONObject.toString(), DeviceEventListEntity.class);
+                            listEntities.add(entity);
+                        }
                     }
+
                     eventEntity.setListEntities(listEntities);
                     if (null != reqView) {
                         reqView.onGetEventList(eventEntity);
@@ -665,7 +752,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                     String errmsg = oriData.getString("errmsg");
                     if (errcode != 0 && null != catEysListener && null != reqView) {
                         catEysListener.onHttpRequestFailed("getMultiDeviceEventList", "The Server is return " + errcode + " , errMsg is " + errmsg);
-                        reqView.onRequestError("The Server is return " + errcode + " , errMsg is " + errmsg, "getDeviceEventList");
+                        reqView.onRequestError(errcode + "", "getDeviceEventList");
                         return;
                     }
                     JSONObject jsonObject = oriData.getJSONObject("content");
@@ -730,6 +817,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppQueryRemovedMessagesReqView
      */
     public void getDeletedEventList(AppQueryRemovedMessagesReqView reqView) throws NoInternetException {
+        //TODO 完善请求检查bean类
         if (!AppUtils.isHaveInternet(CatEyeSDKInterface.get().getContext())) {
             throw new NoInternetException();
         }
@@ -749,7 +837,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                     String errmsg = oriData.getString("errmsg");
                     if (errcode != 0 && null != catEysListener && null != reqView) {
                         catEysListener.onHttpRequestFailed("getDeletedEventList", "The Server is return " + errcode + " , errMsg is " + errmsg);
-                        reqView.onRequestError("The Server is return " + errcode + " , errMsg is " + errmsg, "getDeviceEventList");
+                        reqView.onRequestError(+ errcode + "", "getDeviceEventList");
                         return;
                     }
                     JSONObject jsonObject = oriData.getJSONObject("content");
@@ -841,16 +929,93 @@ public class CatEyeSDKInterface implements CatEyeView {
     /**
      * 从属Slave APP通过扫描主控分享的参数二维码或输入分享码的方式加入设备查看组
      *
-     * @param receiveType [ barcode, num ]    从属Slave APP加入设备的方式，标识ID：=barcode|num
-     * @param shareNum    分享设备二维码时生成的数字分享码：=8位数字字串
-     * @param shareToken  分享设备二维码时生成的Base64加密URL字串（带参数Share_token)：=限长2048位字串
-     * @param reqView     请求回调
+     * @param shareNum   分享设备二维码时生成的数字分享码：=8位数字字串
+     * @param shareToken 分享设备二维码时生成的Base64加密URL字串（带参数Share_token)：=限长2048位字串
+     * @param reqView    请求回调
      * @throws NoAttachViewException
      * @throws NoInternetException
+     * @see errorCode 300-AppID认证出错: AppID不存在, 或Token错误, 或Sign错误;
+     * 1000-请求格式错误, 常见有: Json格式错误, 无参数, 参数类型,参数长度, 参数存在非法字符等;
+     * 1100-数据库执行时出错, 请重新申请;
+     * 1301-Share Token 不存在;
+     * 1303-Share Token 过期;
+     * 1501-同一个app_uid只能绑定一个 dev_uid.
      * @see AppReceiveShareReqView
      */
-    public void joinScanShareDeviceQr(String receiveType, String shareNum, String shareToken, AppReceiveShareReqView reqView) throws NoAttachViewException, NoInternetException {
-        catEyeController.AppReceiveShareReq(receiveType, shareNum, shareToken, reqView);
+    public void joinScanShareDeviceQr(String shareNum, String shareToken, AppReceiveShareReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!AppUtils.isHaveInternet(CatEyeSDKInterface.get().getContext())) {
+            throw new NoInternetException();
+        }
+        String postUrl = "/api/v2/AppReceiveShareReq";
+
+        if (shareNum == null && shareToken == null) {
+            throw new RuntimeException("At least one way to share; shareNum or shareToken,but can't all empty.");
+        }
+        AppReceiveShareParams params = new AppReceiveShareParams();
+        params.setApp_uid(CatEyePreferences.get().getAppUid());
+        params.setApp_envid(CatEyePreferences.get().getAppEnvid());
+        params.setToken(CatEyePreferences.get().getToken());
+
+        if (shareNum == null && shareToken != null) {
+            params.setReceive_type("barcode");
+            params.setShare_token(shareToken);
+        } else if (shareToken == null && shareNum != null) {
+            params.setReceive_type("num");
+            params.setShare_num(shareNum);
+        } else if (shareNum != null && shareToken != null) {
+            throw new RuntimeException("There can't be two kinds of sharing at the same time. set the shareNum or shareToken to NULL.");
+        }
+
+        String json = GsonUtils.toJson(params);
+
+        OkHttpUtils.getInstance(mContext).post(json, postUrl, new OkHttpCallback() {
+            @Override
+            public void onSuccess(JSONObject oriData) {
+                try {
+                    int errcode = oriData.getInt("errcode");
+                    String errmsg = oriData.getString("errmsg");
+                    if (errcode != 0 && null != catEysListener && null != reqView) {
+                        catEysListener.onHttpRequestFailed("joinScanShareDeviceQr", "The Server is return " + errcode + " , errMsg is " + errmsg);
+                        reqView.onRequestError(errcode + "", "getDeviceEventList");
+                        return;
+                    }
+                    AppReceiveShareEntity entity = new AppReceiveShareEntity();
+                    entity.setErrmsg(errmsg);
+                    entity.setErrcode(errcode);
+
+                    try {
+                        JSONObject jsonObject = oriData.getJSONObject("content");
+                        AppReceiveShareEntity.Content content = new AppReceiveShareEntity.Content();
+
+                        content.setDev_uid(jsonObject.getString("dev_uid"));
+                        content.setAid(jsonObject.getString("aid"));
+                        entity.setContent(content);
+
+                        if (null != reqView && errcode == 0) {
+                            reqView.onAppReceiveShareReqSuccess(entity);
+                        }
+                    } catch (Exception e) {
+                        entity.setContent(new AppReceiveShareEntity.Content());
+                        if (null != reqView && errcode == 0) {
+                            reqView.onAppReceiveShareReqSuccess(entity);
+                        } else {
+                            reqView.onRequestError(errcode + "", "joinScanShareDeviceQr");
+                        }
+                    }
+                } catch (JSONException e) {
+                    if (null != catEysListener) {
+                        catEysListener.onHttpRequestFailed("joinScanShareDeviceQr", e.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                if (null != catEysListener) {
+                    catEysListener.onHttpRequestFailed("getDeletedEventList", e.toString());
+                }
+            }
+        });
     }
 
     /**
@@ -880,7 +1045,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                     String errmsg = oriData.getString("errmsg");
                     if (errcode != 0 && null != catEysListener && null != reqView) {
                         catEysListener.onHttpRequestFailed("queryDeviceList", "The Server is return " + errcode + " , errMsg is " + errmsg);
-                        reqView.onRequestError("The Server is return " + errcode + " , errMsg is " + errmsg, "getDeviceEventList");
+                        reqView.onRequestError("" + errcode , "getDeviceEventList");
                         return;
                     }
                     JSONObject jsonObject = oriData.getJSONObject("content");
@@ -1026,7 +1191,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                     String errmsg = oriData.getString("errmsg");
                     if (errcode != 0 && null != catEysListener && null != reqView) {
                         catEysListener.onHttpRequestFailed("partNerGetDeviceList", "The Server is return " + errcode + " , errMsg is " + errmsg);
-                        reqView.onRequestError("The Server is return " + errcode + " , errMsg is " + errmsg, "getDeviceEventList");
+                        reqView.onRequestError("" + errcode , "getDeviceEventList");
                         return;
                     }
                     JSONObject jsonObject = oriData.getJSONObject("content");
@@ -1114,7 +1279,7 @@ public class CatEyeSDKInterface implements CatEyeView {
 
         String postUrl = "/api/v2/QueryCountryCodeReq";
 
-        String json = "{timestamp:" + System.currentTimeMillis() / 1000 + "}";
+        String json = "{\"timestamp\":" + System.currentTimeMillis() / 1000 + "}";
 
         OkHttpUtils.getInstance(mContext).post(json, postUrl, new OkHttpCallback() {
             @Override
@@ -1124,7 +1289,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                     String errmsg = oriData.getString("errmsg");
                     if (errcode != 0 && null != catEysListener && null != reqView) {
                         catEysListener.onHttpRequestFailed("getCountryCodeList", "The Server is return " + errcode + " , errMsg is " + errmsg);
-                        reqView.onRequestError("The Server is return " + errcode + " , errMsg is " + errmsg, "getDeviceEventList");
+                        reqView.onRequestError("" + errcode , "getDeviceEventList");
                         return;
                     }
                     JSONObject jsonObject = oriData.getJSONObject("content");
@@ -1221,6 +1386,15 @@ public class CatEyeSDKInterface implements CatEyeView {
         cmdInfo.setDevUid(devUid);
         cmdInfo.setCreateTime(System.currentTimeMillis());
         String json = GsonUtils.toJson(cmdInfo);
+        mqttManager.publish(topic, json, false, 2);
+    }
+
+    public void reportAudio(String devUid) {
+        String topic = MqttUtils.getAppPubAllTopic(devUid);
+        AppControlDevice controlDevice = new AppControlDevice();
+        controlDevice.setControl_type(4);
+        controlDevice.setCmd("control_device");
+        String json = GsonUtils.toJson(controlDevice);
         mqttManager.publish(topic, json, false, 2);
     }
 
@@ -1372,5 +1546,17 @@ public class CatEyeSDKInterface implements CatEyeView {
 
     public Map<String, DeviceSettings> getCacheMap() {
         return mDeviceSettingsMap;
+    }
+
+    /**
+     * @return SDK的消息通道是否连接
+     */
+    public boolean isSDKConnected() {
+        boolean ret = false;        //默认不在线
+        if (null != mqttManager) {
+            ret = mqttManager.isConnected();
+        }
+
+        return ret;
     }
 }

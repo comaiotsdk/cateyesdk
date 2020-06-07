@@ -92,6 +92,7 @@ public class CatEyeModel {
     }
 
     public static void bindPhone(String phone_num, String verify_code, String password, String nickname, String email, CallBack<BindPhoneEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         //绑定手机号
         Subscriber<BindPhoneEntity> mEntitySubscriber = new Subscriber<BindPhoneEntity>() {
 
@@ -126,6 +127,7 @@ public class CatEyeModel {
     }
 
     public static void AppQueryAccountReq(String type, String email, String phoneNumber, String weChatCode, CallBack<AppQueryAccountEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppQueryAccountEntity> mEntitySubscriber = new Subscriber<AppQueryAccountEntity>() {
 
             @Override
@@ -160,6 +162,7 @@ public class CatEyeModel {
     }
 
     public static void login(String phoneNumber, String password, String pushId, String subscribeType, String verify_code, String weixin_code, String weixin_type, CallBack<AppSubscribeEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppSubscribeEntity> mEntitySubscriber = new Subscriber<AppSubscribeEntity>() {
 
             @Override
@@ -215,6 +218,7 @@ public class CatEyeModel {
     }
 
     public static void loginEmail(String email, String password, String pushId, CallBack<AppSubscribeEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppSubscribeEntity> mEntitySubscriber = new Subscriber<AppSubscribeEntity>() {
 
             @Override
@@ -270,6 +274,7 @@ public class CatEyeModel {
     }
 
     public static void AppUnSubscribeReq(CallBack<AppUnSubscribeEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppUnSubscribeEntity> mEntitySubscriber = new Subscriber<AppUnSubscribeEntity>() {
 
             @Override
@@ -328,6 +333,13 @@ public class CatEyeModel {
                     callBack.onError(baseEntity.getErrcode() + "");
                     callBack.onComplete();
                 } else {
+                    String app_uid = baseEntity.getContent().getApp_uid();
+                    String app_envid = baseEntity.getContent().getApp_envid();
+                    String token = baseEntity.getContent().getToken();
+                    CatEyePreferences.get().saveAppUid(DESUtils.encryptString(app_uid));
+                    CatEyePreferences.get().saveAppEnvid(DESUtils.encryptString(app_envid));
+                    CatEyePreferences.get().saveToken(DESUtils.encryptString(token));
+
                     callBack.onSuccess(baseEntity);
                 }
             }
@@ -336,6 +348,7 @@ public class CatEyeModel {
     }
 
     public static void AppChangePasswordReq(String old_password, String new_password, CallBack<AppChangePasswordEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppChangePasswordEntity> mEntitySubscriber = new Subscriber<AppChangePasswordEntity>() {
 
             @Override
@@ -369,6 +382,7 @@ public class CatEyeModel {
     }
 
     public static void AppResetPasswordByPhoneReq(String phone_num, String verify_code, String password, CallBack<AppResetPasswordByPhoneEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppResetPasswordByPhoneEntity> mEntitySubscriber = new Subscriber<AppResetPasswordByPhoneEntity>() {
 
             @Override
@@ -402,6 +416,7 @@ public class CatEyeModel {
     }
 
     public static void AppResetPasswordByEmailReq(String phone_num, String verify_code, String password, CallBack<AppResetPasswordByEmailEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppResetPasswordByEmailEntity> mEntitySubscriber = new Subscriber<AppResetPasswordByEmailEntity>() {
 
             @Override
@@ -435,6 +450,7 @@ public class CatEyeModel {
     }
 
     public static void AppChangeAccountInfoReq(String email, String avatar, String push_id, String nickname, CallBack<AppChangeAccountInfoEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppChangeAccountInfoEntity> mEntitySubscriber = new Subscriber<AppChangeAccountInfoEntity>() {
 
             @Override
@@ -468,6 +484,7 @@ public class CatEyeModel {
     }
 
     public static void AppChangePhoneReq(String old_phone_num, String old_verify_code, String new_phone_num, String new_verify_code, CallBack<AppChangePhoneEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppChangePhoneEntity> mEntitySubscriber = new Subscriber<AppChangePhoneEntity>() {
 
             @Override
@@ -501,6 +518,7 @@ public class CatEyeModel {
     }
 
     public static void AppBindWeixinReq(String phoneNumber, String verifyCode, String weixin_code, CallBack<AppBindWeixinEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppBindWeixinEntity> mEntitySubscriber = new Subscriber<AppBindWeixinEntity>() {
 
             @Override
@@ -534,6 +552,7 @@ public class CatEyeModel {
     }
 
     public static void bindEmail(String email, String verifyCode, String password, String phoneNumber, String nickName, CallBack<AppBindEmailEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppBindEmailEntity> mEntitySubscriber = new Subscriber<AppBindEmailEntity>() {
 
             @Override
@@ -567,6 +586,7 @@ public class CatEyeModel {
     }
 
     public static void removeAccount(CallBack<AppRemoveAccountEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppRemoveAccountEntity> mEntitySubscriber = new Subscriber<AppRemoveAccountEntity>() {
 
             @Override
@@ -635,6 +655,7 @@ public class CatEyeModel {
     }
 
     public static void uploadConfig(String config, CallBack<AppUploadConfigEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppUploadConfigEntity> mEntitySubscriber = new Subscriber<AppUploadConfigEntity>() {
 
             @Override
@@ -668,6 +689,7 @@ public class CatEyeModel {
     }
 
     public static void getConfig(CallBack<AppDownloadConfigEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppDownloadConfigEntity> mEntitySubscriber = new Subscriber<AppDownloadConfigEntity>() {
 
             @Override
@@ -764,39 +786,6 @@ public class CatEyeModel {
             }
         };
         RetrofitUtil.getInstance().AppRemoveSharedDeviceReq(mEntitySubscriber, appAid);
-    }
-
-    public static void getDeviceConfig(String aid, String devUid, CallBack<AppDownloadDevConfigEntity> callBack) {
-        Subscriber<AppDownloadDevConfigEntity> mEntitySubscriber = new Subscriber<AppDownloadDevConfigEntity>() {
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                callBack.onStart();
-            }
-
-            @Override
-            public void onCompleted() {
-                callBack.onComplete();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                callBack.onError(e.getMessage());
-                callBack.onComplete();
-            }
-
-            @Override
-            public void onNext(AppDownloadDevConfigEntity baseEntity) {
-                if (baseEntity.getErrcode() != 0) {
-                    callBack.onError(baseEntity.getErrcode() + "");
-                    callBack.onComplete();
-                } else {
-                    callBack.onSuccess(baseEntity);
-                }
-            }
-        };
-        RetrofitUtil.getInstance().getDeviceConfig(mEntitySubscriber, aid, devUid);
     }
 
     public static void queryDeviceConnectStatus(String aid, String devUid, CallBack<AppQueryDevConnectEntity> callBack) {
@@ -964,39 +953,6 @@ public class CatEyeModel {
         RetrofitUtil.getInstance().AppShareDeviceReq(mEntitySubscriber, appAid, devUid);
     }
 
-    public static void AppReceiveShareReq(String receive_type, String share_num, String share_token, CallBack<AppReceiveShareEntity> callBack) {
-        Subscriber<AppReceiveShareEntity> mEntitySubscriber = new Subscriber<AppReceiveShareEntity>() {
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                callBack.onStart();
-            }
-
-            @Override
-            public void onCompleted() {
-                callBack.onComplete();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                callBack.onError(e.getMessage());
-                callBack.onComplete();
-            }
-
-            @Override
-            public void onNext(AppReceiveShareEntity baseEntity) {
-                if (baseEntity.getErrcode() != 0) {
-                    callBack.onError(baseEntity.getErrcode() + "");
-                    callBack.onComplete();
-                } else {
-                    callBack.onSuccess(baseEntity);
-                }
-            }
-        };
-        RetrofitUtil.getInstance().AppReceiveShareReq(mEntitySubscriber, receive_type, share_num, share_token);
-    }
-
     public static void AppQuerySharedDeviceReq(String aid, CallBack<AppQuerySharedDeviceEntity> callBack) {
         Subscriber<AppQuerySharedDeviceEntity> mEntitySubscriber = new Subscriber<AppQuerySharedDeviceEntity>() {
 
@@ -1088,6 +1044,7 @@ public class CatEyeModel {
     }
 
     public static void setWeChatPush(String weixin_accountid, String weixin_openid, String weixin_unionid, int push_on_off, CallBack<PartnerWeixinPushConfigEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<PartnerWeixinPushConfigEntity> mEntitySubscriber = new Subscriber<PartnerWeixinPushConfigEntity>() {
 
             @Override
@@ -1124,6 +1081,7 @@ public class CatEyeModel {
     }
 
     public static void notificationWeChat(String weChatAccountid, String weChatOpenidList, String content, CallBack<PartnerWeixinPushNoticeEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<PartnerWeixinPushNoticeEntity> mEntitySubscriber = new Subscriber<PartnerWeixinPushNoticeEntity>() {
 
             @Override
@@ -1299,6 +1257,7 @@ public class CatEyeModel {
     }
 
     public static void smsToPhone(String phone_num, String signName, CallBack<SmsEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         //发送验证码
         Subscriber<SmsEntity> mEntitySubscriber = new Subscriber<SmsEntity>() {
 
@@ -1518,6 +1477,7 @@ public class CatEyeModel {
     }
 
     public static void sendEmail(String email, CallBack<EmailTokenEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<EmailTokenEntity> mEntitySubscriber = new Subscriber<EmailTokenEntity>() {
 
             @Override
