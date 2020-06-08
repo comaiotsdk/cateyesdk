@@ -751,7 +751,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
-
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.AppRemoveMessageReq(aid, msgId, devUid, new CallBack<AppRemoveMessageEntity>() {
             @Override
             public void onStart() {
@@ -922,41 +922,6 @@ public class CatEyeController<V extends CatEyeView> {
     }
 
     //-------------------------------------------------------------------------------------------------------------//
-
-    public void loginServer(String jwt_token, final AppSubscribeReqView reqView) throws NoInternetException, NoAttachViewException {
-        if (!AppUtils.isHaveInternet(CatEyeSDKInterface.get().getContext())) {
-            throw new NoInternetException();
-        }
-        if (!isViewAttached()) {
-            throw new NoAttachViewException();
-        }
-        CatEyeModel.loginServer(jwt_token, new CallBack<AppSubscribeEntity>() {
-            @Override
-            public void onStart() {
-                if (isViewAttached() && null != reqView)
-                    reqView.showLoading();
-            }
-
-            @Override
-            public void onComplete() {
-                if (isViewAttached())
-                    reqView.hideLoading();
-            }
-
-            @Override
-            public void onError(String msg) {
-                if (isViewAttached())
-                    reqView.onRequestError(msg, "loginServer");
-            }
-
-            @Override
-            public void onSuccess(AppSubscribeEntity data) {
-                if (isViewAttached())
-                    reqView.onSubscribeSuccess(data.getContent().getExpire());
-            }
-        });
-    }
-
     public void setWeChatPush(String weChatAccountid, String weChatOpenid, String weChatUnionid, int pushOnOff, final PartnerWeixinPushConfigReqView reqView) throws NoInternetException, NoAttachViewException {
         if (!AppUtils.isHaveInternet(CatEyeSDKInterface.get().getContext())) {
             throw new NoInternetException();

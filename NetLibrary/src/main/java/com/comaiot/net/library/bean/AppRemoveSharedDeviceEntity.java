@@ -3,10 +3,26 @@ package com.comaiot.net.library.bean;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class AppRemoveSharedDeviceEntity extends BaseAppEntity {
+public class AppRemoveSharedDeviceEntity implements Serializable {
+    private int errcode;
+    private String errmsg;
     private Content[] content;
-    private String appUid;
-    private String devUid;
+
+    public int getErrcode() {
+        return errcode;
+    }
+
+    public void setErrcode(int errcode) {
+        this.errcode = errcode;
+    }
+
+    public String getErrmsg() {
+        return errmsg;
+    }
+
+    public void setErrmsg(String errmsg) {
+        this.errmsg = errmsg;
+    }
 
     public Content[] getContent() {
         return content;
@@ -16,28 +32,12 @@ public class AppRemoveSharedDeviceEntity extends BaseAppEntity {
         this.content = content;
     }
 
-    public String getAppUid() {
-        return appUid;
-    }
-
-    public void setAppUid(String appUid) {
-        this.appUid = appUid;
-    }
-
-    public String getDevUid() {
-        return devUid;
-    }
-
-    public void setDevUid(String devUid) {
-        this.devUid = devUid;
-    }
-
     @Override
     public String toString() {
         return "AppRemoveSharedDeviceEntity{" +
-                "content=" + Arrays.toString(content) +
-                ", appUid='" + appUid + '\'' +
-                ", devUid='" + devUid + '\'' +
+                "errcode=" + errcode +
+                ", errmsg='" + errmsg + '\'' +
+                ", content=" + Arrays.toString(content) +
                 '}';
     }
 

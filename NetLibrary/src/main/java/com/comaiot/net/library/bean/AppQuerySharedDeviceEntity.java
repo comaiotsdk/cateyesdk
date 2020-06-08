@@ -2,6 +2,7 @@ package com.comaiot.net.library.bean;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public class AppQuerySharedDeviceEntity implements Serializable {
     private int errcode;
@@ -43,7 +44,7 @@ public class AppQuerySharedDeviceEntity implements Serializable {
 
     public static class Content implements Serializable{
         private int num;
-        private List<ShareUser> list;
+        private Map<String,ShareUser> list;
 
         public int getNum() {
             return num;
@@ -53,11 +54,11 @@ public class AppQuerySharedDeviceEntity implements Serializable {
             this.num = num;
         }
 
-        public List<ShareUser> getList() {
+        public Map<String, ShareUser> getList() {
             return list;
         }
 
-        public void setList(List<ShareUser> list) {
+        public void setList(Map<String, ShareUser> list) {
             this.list = list;
         }
 

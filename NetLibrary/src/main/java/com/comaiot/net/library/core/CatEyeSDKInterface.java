@@ -1,9 +1,12 @@
 package com.comaiot.net.library.core;
 
 import android.content.Context;
+import android.os.Build;
 
+import com.comaiot.net.library.Model.DESUtils;
 import com.comaiot.net.library.bean.AppControlDevice;
 import com.comaiot.net.library.bean.AppReceiveShareEntity;
+import com.comaiot.net.library.bean.AppSubscribeEntity;
 import com.comaiot.net.library.bean.CmdInfo;
 import com.comaiot.net.library.bean.DeviceStatusChangeEntity;
 import com.comaiot.net.library.bean.DeviceSvrCacheSettings;
@@ -50,6 +53,7 @@ import com.comaiot.net.library.bean.DeviceWorkModeChangeEvent;
 import com.comaiot.net.library.bean.PartNerQueryDevice;
 import com.comaiot.net.library.bean.PartNerQueryDeviceEntity;
 import com.comaiot.net.library.bean.QueryCountryCodeEntity;
+import com.comaiot.net.library.inter.StringUtils;
 import com.comaiot.net.library.prfs.CatEyePreferences;
 import com.comaiot.net.library.prfs.GeneralPreferences;
 import com.comaiot.net.library.req_params.AppDownloadDevConfigEntity;
@@ -76,6 +80,7 @@ import com.comaiot.net.library.controller.view.PartNerQueryDeviceListReqView;
 import com.comaiot.net.library.controller.view.QueryCountryCodeReqView;
 import com.comaiot.net.library.req_params.AppReceiveShareParams;
 import com.comaiot.net.library.req_params.AppRemoveAccountParams;
+import com.comaiot.net.library.req_params.CatEyeLoginParams;
 import com.comaiot.net.library.utils.Logger;
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -255,7 +260,104 @@ public class CatEyeSDKInterface implements CatEyeView {
         if (!CatEyePreferences.get().getRegisterStatus()) {
             throw new NotRegisterDeviceException();
         }
-        catEyeController.loginServer(jwt, reqView);
+        String postUrl = "/api/v2/PartnerSubscribeReq";
+
+        long timestamp = System.currentTimeMillis() / 1000;
+        String nonce = StringUtils.get_bit_string(6);
+        String sign = StringUtils.sign(sk, timestamp, nonce);
+        CatEyeLoginParams params = new CatEyeLoginParams();
+        params.setAppak(ak);
+        params.setTimestamp(timestamp);
+        params.setNonce(nonce);
+        params.setSign(sign);
+        params.setBrand(Build.BRAND);
+        params.setType("Android");
+        params.setJwt_token(jwt);
+        params.setApp_uid(CatEyePreferences.get().getAppUid());
+        params.setApp_envid(CatEyePreferences.get().getAppEnvid());
+        String json = GsonUtils.toJson(params);
+
+        Logger.dd("[loginForJwt] json: " + json);
+
+        OkHttpUtils.getInstance(mContext).post(json, postUrl, new OkHttpCallback() {
+            @Override
+            public void onSuccess(JSONObject oriData) {
+                try {
+                    int errcode = oriData.getInt("errcode");
+                    String errmsg = oriData.getString("errmsg");
+                    if (errcode != 0 && null != catEysListener && null != reqView) {
+                        catEysListener.onHttpRequestFailed("loginForJwt", "The Server is return " + errcode + " , errMsg is " + errmsg);
+                        reqView.onRequestError("" + errcode, "loginForJwt");
+                        return;
+                    }
+
+                    AppSubscribeEntity entity = new AppSubscribeEntity();
+                    entity.setErrcode(errcode);
+                    entity.setErrmsg(errmsg);
+
+                    try {
+                        JSONObject jsonObject = oriData.getJSONObject("content");
+                        AppSubscribeEntity.Content content = new AppSubscribeEntity.Content();
+                        content.setApp_envid(jsonObject.getString("app_envid"));
+                        content.setApp_uid(jsonObject.getString("app_uid"));
+                        content.setToken(jsonObject.getString("token"));
+                        content.setExpire(jsonObject.getLong("expire"));
+
+                        JSONObject mqttJsonObj = jsonObject.getJSONObject("mqtt");
+                        AppSubscribeEntity.Mqtt mqtt = new AppSubscribeEntity.Mqtt();
+                        mqtt.setIp(mqttJsonObj.getString("ip"));
+                        mqtt.setPass(mqttJsonObj.getString("pass"));
+                        mqtt.setPort(mqttJsonObj.getString("port"));
+                        mqtt.setUser(mqttJsonObj.getString("user"));
+                        content.setMqtt(mqtt);
+
+                        entity.setContent(content);
+
+                        if (null != reqView) {
+
+                            String app_uid = entity.getContent().getApp_uid();
+                            String app_envid = entity.getContent().getApp_envid();
+                            String token = entity.getContent().getToken();
+                            CatEyePreferences.get().saveAppUid(DESUtils.encryptString(app_uid));
+                            CatEyePreferences.get().saveAppEnvid(DESUtils.encryptString(app_envid));
+                            CatEyePreferences.get().saveToken(DESUtils.encryptString(token));
+
+                            String clientId = app_uid + "-" + app_envid;
+                            String host = entity.getContent().getMqtt().getIp();
+                            String port = entity.getContent().getMqtt().getPort();
+                            String user = entity.getContent().getMqtt().getUser();
+                            String pwd = entity.getContent().getMqtt().getPass();
+
+                            CatEyePreferences.get().saveMqttHost(host);
+                            CatEyePreferences.get().saveMqttPort(port);
+                            CatEyePreferences.get().saveMqttUser(user);
+                            CatEyePreferences.get().saveMqttPass(pwd);
+
+                            MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).connect(host, clientId, port, user, pwd);
+
+                            reqView.onSubscribeSuccess(entity.getContent().getExpire());
+                        }
+                    } catch (Exception e) {
+                        entity.setContent(new AppSubscribeEntity.Content());
+                        if (null != reqView) {
+                            reqView.onRequestError("" + entity.getErrcode(), "loginForJwt");
+                        }
+                        return;
+                    }
+                } catch (JSONException e) {
+                    if (null != catEysListener) {
+                        catEysListener.onHttpRequestFailed("loginForJwt", e.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                if (null != catEysListener) {
+                    catEysListener.onHttpRequestFailed("loginForJwt", e.toString());
+                }
+            }
+        });
     }
 
     /**
@@ -528,7 +630,7 @@ public class CatEyeSDKInterface implements CatEyeView {
     }
 
     /**
-     * APP用户发送删除设备共享用户请求，删除对此设备的共享关系
+     * APP用户发送删除设备共享用户请求，删除对此设备的共享关系（主控账号取消分享）
      *
      * @param removeAid APP Access ID，APP绑定在不同设备下的标识ID：=8位字串
      * @param reqView   请求回调
@@ -675,7 +777,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                     String errmsg = oriData.getString("errmsg");
                     if (errcode != 0 && null != catEysListener && null != reqView) {
                         catEysListener.onHttpRequestFailed("getDeviceEventList", "The Server is return " + errcode + " , errMsg is " + errmsg);
-                        reqView.onRequestError("" + errcode , "getDeviceEventList");
+                        reqView.onRequestError("" + errcode, "getDeviceEventList");
                         return;
                     }
                     JSONObject jsonObject = oriData.getJSONObject("content");
@@ -807,6 +909,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppRemoveMessageReqView
      */
     public void deleteEvent(String aid, String msgId, String devUid, AppRemoveMessageReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.AppRemoveMessageReq(aid, msgId, devUid, reqView);
     }
 
@@ -817,7 +920,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppQueryRemovedMessagesReqView
      */
     public void getDeletedEventList(AppQueryRemovedMessagesReqView reqView) throws NoInternetException {
-        //TODO 完善请求检查bean类
+        if (!COMAIOT) return;
         if (!AppUtils.isHaveInternet(CatEyeSDKInterface.get().getContext())) {
             throw new NoInternetException();
         }
@@ -837,7 +940,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                     String errmsg = oriData.getString("errmsg");
                     if (errcode != 0 && null != catEysListener && null != reqView) {
                         catEysListener.onHttpRequestFailed("getDeletedEventList", "The Server is return " + errcode + " , errMsg is " + errmsg);
-                        reqView.onRequestError(+ errcode + "", "getDeviceEventList");
+                        reqView.onRequestError(+errcode + "", "getDeviceEventList");
                         return;
                     }
                     JSONObject jsonObject = oriData.getJSONObject("content");
@@ -1045,7 +1148,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                     String errmsg = oriData.getString("errmsg");
                     if (errcode != 0 && null != catEysListener && null != reqView) {
                         catEysListener.onHttpRequestFailed("queryDeviceList", "The Server is return " + errcode + " , errMsg is " + errmsg);
-                        reqView.onRequestError("" + errcode , "getDeviceEventList");
+                        reqView.onRequestError("" + errcode, "getDeviceEventList");
                         return;
                     }
                     JSONObject jsonObject = oriData.getJSONObject("content");
@@ -1152,15 +1255,15 @@ public class CatEyeSDKInterface implements CatEyeView {
     /**
      * 变更当前账号下的手机号码。上传新的phone_num, 当前账号的jwt_token, 变更到新的手机号码
      *
-     * @param phoneNumber 新的手机号码
-     * @param jwt         JWT Token字符串，长度1024位字串
-     * @param reqView     请求回调
+     * @param newPhoneNumber 新的手机号码
+     * @param jwt            JWT Token字符串，长度1024位字串
+     * @param reqView        请求回调
      * @throws NoAttachViewException
      * @throws NoInternetException
      * @see PartnerChangePhoneReqView
      */
-    public void partNerChangePhoneNumber(String phoneNumber, String jwt, PartnerChangePhoneReqView reqView) throws NoAttachViewException, NoInternetException {
-        catEyeController.PartnerChangePhoneReq(phoneNumber, jwt, reqView);
+    public void partNerChangePhoneNumber(String newPhoneNumber, String jwt, PartnerChangePhoneReqView reqView) throws NoAttachViewException, NoInternetException {
+        catEyeController.PartnerChangePhoneReq(newPhoneNumber, jwt, reqView);
     }
 
     /**
@@ -1191,7 +1294,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                     String errmsg = oriData.getString("errmsg");
                     if (errcode != 0 && null != catEysListener && null != reqView) {
                         catEysListener.onHttpRequestFailed("partNerGetDeviceList", "The Server is return " + errcode + " , errMsg is " + errmsg);
-                        reqView.onRequestError("" + errcode , "getDeviceEventList");
+                        reqView.onRequestError("" + errcode, "getDeviceEventList");
                         return;
                     }
                     JSONObject jsonObject = oriData.getJSONObject("content");
@@ -1289,7 +1392,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                     String errmsg = oriData.getString("errmsg");
                     if (errcode != 0 && null != catEysListener && null != reqView) {
                         catEysListener.onHttpRequestFailed("getCountryCodeList", "The Server is return " + errcode + " , errMsg is " + errmsg);
-                        reqView.onRequestError("" + errcode , "getDeviceEventList");
+                        reqView.onRequestError("" + errcode, "getDeviceEventList");
                         return;
                     }
                     JSONObject jsonObject = oriData.getJSONObject("content");

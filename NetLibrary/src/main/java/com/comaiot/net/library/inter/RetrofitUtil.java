@@ -751,6 +751,7 @@ public class RetrofitUtil {
     }
 
     public void AppRemoveMessageReq(Subscriber<AppRemoveMessageEntity> subscriber, String aid, String msgId, String devUid) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppRemoveMessageReqParams params = new AppRemoveMessageReqParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -845,31 +846,6 @@ public class RetrofitUtil {
     }
 
     // ------------------------------------------------------------------------------------------------------------//
-
-    public void loginServer(Subscriber<AppSubscribeEntity> subscriber, String jwt_token) {
-        long timestamp = System.currentTimeMillis() / 1000;
-        String nonce = StringUtils.get_bit_string(6);
-        String sign = StringUtils.sign(sk, timestamp, nonce);
-        CatEyeLoginParams params = new CatEyeLoginParams();
-        params.setAppak(ak);
-        params.setTimestamp(timestamp);
-        params.setNonce(nonce);
-        params.setSign(sign);
-        params.setBrand(Build.BRAND);
-        params.setType("Android");
-        params.setJwt_token(jwt_token);
-        params.setApp_uid(CatEyePreferences.get().getAppUid());
-        params.setApp_envid(CatEyePreferences.get().getAppEnvid());
-        String json = GsonUtils.toJson(params);
-        Logger.dd("loginServer Json : \n" + json);
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
-
-        mCatEyeService.loginServer(requestBody)
-                .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber);
-    }
 
     public void setWeChatPush(Subscriber<PartnerWeixinPushConfigEntity> subscriber, String weixin_accountid, String weixin_openid, String weixin_unionid, int push_on_off) {
         if (!CatEyeSDKInterface.COMAIOT) return;

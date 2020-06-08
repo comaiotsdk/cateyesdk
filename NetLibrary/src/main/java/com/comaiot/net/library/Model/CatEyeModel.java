@@ -822,6 +822,7 @@ public class CatEyeModel {
     }
 
     public static void AppRemoveMessageReq(String aid, String msgId, String devUid, CallBack<AppRemoveMessageEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppRemoveMessageEntity> mEntitySubscriber = new Subscriber<AppRemoveMessageEntity>() {
 
             @Override
@@ -987,62 +988,6 @@ public class CatEyeModel {
     }
 
     // -------------------------------------------------------------------------------------------------------------//
-
-    public static void loginServer(String jwt_token, CallBack<AppSubscribeEntity> callBack) {
-        Subscriber<AppSubscribeEntity> mEntitySubscriber = new Subscriber<AppSubscribeEntity>() {
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                callBack.onStart();
-            }
-
-            @Override
-            public void onCompleted() {
-                callBack.onComplete();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                String eMessage = e.getMessage();
-                callBack.onError(eMessage);
-                callBack.onComplete();
-                Logger.ee("[loginServer] failed" + eMessage);
-            }
-
-            @Override
-            public void onNext(AppSubscribeEntity baseEntity) {
-                Logger.dd("[loginServer] success" + baseEntity.toString());
-                if (baseEntity.getErrcode() != 0) {
-                    callBack.onError(baseEntity.getErrcode() + "");
-                    callBack.onComplete();
-                } else {
-                    String app_uid = baseEntity.getContent().getApp_uid();
-                    String app_envid = baseEntity.getContent().getApp_envid();
-                    String token = baseEntity.getContent().getToken();
-                    CatEyePreferences.get().saveAppUid(DESUtils.encryptString(app_uid));
-                    CatEyePreferences.get().saveAppEnvid(DESUtils.encryptString(app_envid));
-                    CatEyePreferences.get().saveToken(DESUtils.encryptString(token));
-
-                    String clientId = app_uid + "-" + app_envid;
-                    String host = baseEntity.getContent().getMqtt().getIp();
-                    String port = baseEntity.getContent().getMqtt().getPort();
-                    String user = baseEntity.getContent().getMqtt().getUser();
-                    String pwd = baseEntity.getContent().getMqtt().getPass();
-
-                    CatEyePreferences.get().saveMqttHost(host);
-                    CatEyePreferences.get().saveMqttPort(port);
-                    CatEyePreferences.get().saveMqttUser(user);
-                    CatEyePreferences.get().saveMqttPass(pwd);
-
-                    MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).connect(host, clientId, port, user, pwd);
-                    callBack.onSuccess(baseEntity);
-                }
-            }
-        };
-        RetrofitUtil.getInstance().loginServer(mEntitySubscriber, jwt_token);
-    }
-
     public static void setWeChatPush(String weixin_accountid, String weixin_openid, String weixin_unionid, int push_on_off, CallBack<PartnerWeixinPushConfigEntity> callBack) {
         if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<PartnerWeixinPushConfigEntity> mEntitySubscriber = new Subscriber<PartnerWeixinPushConfigEntity>() {

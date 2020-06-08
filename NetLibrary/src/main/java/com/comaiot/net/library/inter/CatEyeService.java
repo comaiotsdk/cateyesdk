@@ -126,9 +126,6 @@ public interface CatEyeService {
     Observable<AppQuerySharedDeviceEntity> AppQuerySharedDeviceReq(@Body RequestBody body);
 
     /* -------------------------- PartnerFunctions 提供给第三方如优点科技的调用接口 -----------------------------*/
-    @POST("api/v2/PartnerSubscribeReq")
-    Observable<AppSubscribeEntity> loginServer(@Body RequestBody body);
-
     @POST("api/v2/PartnerWeixinPushConfigReq")
     Observable<PartnerWeixinPushConfigEntity> setWeChatPush(@Body RequestBody body);
 
