@@ -8,6 +8,8 @@ import android.util.Log;
 import com.comaiot.net.library.bean.CmdInfo;
 import com.comaiot.net.library.bean.DeviceStatusChangeEntity;
 import com.comaiot.net.library.bean.SetDeviceSettingEntity;
+import com.comaiot.net.library.bean.UpdateDeviceEntity;
+import com.comaiot.net.library.bean.UpdateVersionInfo;
 import com.comaiot.net.library.core.CatEyeSDKInterface;
 import com.comaiot.net.library.bean.AudioCallEvent;
 import com.comaiot.net.library.bean.DeviceAlarmEvent;
@@ -412,6 +414,8 @@ public class EasyMqttService {
             CmdInfo cmdInfo = GsonUtils.fromJson(msgContent, CmdInfo.class);
             String devUid = cmdInfo.getDevUid();
 
+            Log.i(TAG, "messageArrived: CmdInfo= " + (null == cmdInfo ? "cmdInfo is null" : cmdInfo.toString()));
+
             if (devUid == null || devUid.isEmpty()) {
                 if (topic.contains("{") && topic.contains("}")) {
                     int indexStart = topic.indexOf("{");
@@ -419,6 +423,8 @@ public class EasyMqttService {
                     devUid = topic.substring(indexStart + 1, indexEnd);
                 }
             }
+
+            Log.i(TAG, "messageArrived: devUid= " + devUid);
 
             if (cmdInfo.getCmd().equals("get_device_status") || cmdInfo.getCmd().equals("set_device_setting") || cmdInfo.getCmd().equals("device_status_changed")) {
                 if (cmdInfo.getCmd().equals("device_status_changed")) {
@@ -529,6 +535,19 @@ public class EasyMqttService {
 
                 if (null != MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback()) {
                     MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback().onDeviceRestartEvent(devUid, deviceRestartEvent);
+                }
+            } else if (cmdInfo.getCmd().equals("UpdateDevice")) {
+                UpdateDeviceEntity updateDeviceEntity = GsonUtils.fromJson(msgContent, UpdateDeviceEntity.class);
+
+                if (null != MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback()) {
+                    MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback().onDeviceUpdateCheckInfo(devUid, updateDeviceEntity);
+                }
+            } else if (cmdInfo.getCmd().equals("UpdateVersionUpload")) {
+                Log.i(TAG, "messageArrived: UpdateVersionUpload cmd Arrived");
+                UpdateVersionInfo updateVersionInfo = GsonUtils.fromJson(msgContent, UpdateVersionInfo.class);
+                Log.i(TAG, "messageArrived: UpdateVersionUpload cmd Arrived UpdateVersionInfo= " + (null == updateVersionInfo ? "updateVersionInfo is null" : updateVersionInfo.toString()));
+                if (null != MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback()) {
+                    MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback().onDeviceUpdateInfo(devUid, updateVersionInfo);
                 }
             }
         }

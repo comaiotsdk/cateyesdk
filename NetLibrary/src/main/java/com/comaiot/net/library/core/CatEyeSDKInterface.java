@@ -1529,6 +1529,32 @@ public class CatEyeSDKInterface implements CatEyeView {
     }
 
     /**
+     * 检查设备版本更新
+     *
+     * @param devUid 设备的devUid
+     */
+    public void checkDeviceVersion(String devUid) {
+        String topic = MqttUtils.getAppPubAllTopic(devUid);
+        DeviceSettings deviceSettings = new DeviceSettings();
+        deviceSettings.setCmd("UpdateDevice");
+        String json = GsonUtils.toJson(deviceSettings);
+        mqttManager.publish(topic, json, false, 2);
+    }
+
+    /**
+     * 确认设备版本更新
+     *
+     * @param devUid 设备的devUid
+     */
+    public void confirmDeviceUpdate(String devUid) {
+        String topic = MqttUtils.getAppPubAllTopic(devUid);
+        DeviceSettings deviceSettings = new DeviceSettings();
+        deviceSettings.setCmd("ConfirmUpdateDevice");
+        String json = GsonUtils.toJson(deviceSettings);
+        mqttManager.publish(topic, json, false, 2);
+    }
+
+    /**
      * 设置设备属性
      *
      * @param devUid         设备的devUid

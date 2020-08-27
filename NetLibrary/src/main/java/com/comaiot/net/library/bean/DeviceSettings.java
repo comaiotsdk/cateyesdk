@@ -23,6 +23,7 @@ public class DeviceSettings implements Serializable {
     private int intelligentNight;
     private int callAlarmStatus;        //1-open;2-close
     private int doorbellLight;          //1-open;2-close
+    private String customJsonContent;       //custom json content
 
     public String getDeviceId() {
         return deviceId;
@@ -128,9 +129,17 @@ public class DeviceSettings implements Serializable {
         this.doorbellLight = doorbellLight;
     }
 
+    public String getCustomJsonContent() {
+        return customJsonContent;
+    }
+
+    public void setCustomJsonContent(String customJsonContent) {
+        this.customJsonContent = customJsonContent;
+    }
+
     @Override
     public String toString() {
-        return "GetDeviceStatusEntity{" +
+        return "DeviceSettings{" +
                 "cmd='" + cmd + '\'' +
                 ", deviceId='" + deviceId + '\'' +
                 ", ring=" + ring +
@@ -148,6 +157,7 @@ public class DeviceSettings implements Serializable {
                 ", intelligentNight=" + intelligentNight +
                 ", callAlarmStatus=" + callAlarmStatus +
                 ", doorbellLight=" + doorbellLight +
+                ", customJsonContent='" + customJsonContent + '\'' +
                 '}';
     }
 

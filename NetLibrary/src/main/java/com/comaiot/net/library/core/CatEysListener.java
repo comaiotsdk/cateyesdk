@@ -8,6 +8,8 @@ import com.comaiot.net.library.bean.DeviceRestartEvent;
 import com.comaiot.net.library.bean.DeviceSettings;
 import com.comaiot.net.library.bean.DeviceVideoCloseEvent;
 import com.comaiot.net.library.bean.DeviceWorkModeChangeEvent;
+import com.comaiot.net.library.bean.UpdateDeviceEntity;
+import com.comaiot.net.library.bean.UpdateVersionInfo;
 
 public interface CatEysListener {
     /**
@@ -106,4 +108,18 @@ public interface CatEysListener {
      * @param e 异常信息
      */
     void onMessageSocketLost(Throwable e);
+
+    /**
+     * 猫眼端升级检查
+     *
+     * @param devUid 设备devUid
+     */
+    void onDeviceUpdateCheckInfo(String devUid, UpdateDeviceEntity entity);
+
+    /**
+     * 猫眼端升级下载中
+     *
+     * @param devUid 设备devUid
+     */
+    void onDeviceUpdateInfo(String devUid, UpdateVersionInfo info);
 }
