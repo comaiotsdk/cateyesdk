@@ -751,7 +751,6 @@ public class RetrofitUtil {
     }
 
     public void AppRemoveMessageReq(Subscriber<AppRemoveMessageEntity> subscriber, String aid, String msgId, String devUid) {
-        if (!CatEyeSDKInterface.COMAIOT) return;
         AppRemoveMessageReqParams params = new AppRemoveMessageReqParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());

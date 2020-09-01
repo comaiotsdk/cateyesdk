@@ -822,7 +822,6 @@ public class CatEyeModel {
     }
 
     public static void AppRemoveMessageReq(String aid, String msgId, String devUid, CallBack<AppRemoveMessageEntity> callBack) {
-        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppRemoveMessageEntity> mEntitySubscriber = new Subscriber<AppRemoveMessageEntity>() {
 
             @Override

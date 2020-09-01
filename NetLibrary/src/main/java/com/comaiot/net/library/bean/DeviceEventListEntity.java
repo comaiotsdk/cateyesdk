@@ -9,6 +9,7 @@ public class DeviceEventListEntity {
     private String file_type;
     private String from_where;
     private String from_id;
+    private String msg_id;
 
     public String getDev_uid() {
         return dev_uid;
@@ -74,6 +75,14 @@ public class DeviceEventListEntity {
         this.from_id = from_id;
     }
 
+    public String getMsg_id() {
+        return msg_id;
+    }
+
+    public void setMsg_id(String msg_id) {
+        this.msg_id = msg_id;
+    }
+
     @Override
     public String toString() {
         return "DeviceEventListEntity{" +
@@ -85,6 +94,7 @@ public class DeviceEventListEntity {
                 ", file_type='" + file_type + '\'' +
                 ", from_where='" + from_where + '\'' +
                 ", from_id='" + from_id + '\'' +
+                ", msg_id='" + msg_id + '\'' +
                 '}';
     }
 }

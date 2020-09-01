@@ -54,10 +54,8 @@ import java.io.Serializable;
  */
 public class DeviceStatusChangeEntity implements Serializable {
     private String cmd;
-    private Wifi wifi;
-    private Ring ring;
-    private Battery battery;
     private DeviceSettings device_status;
+    private GZWXCostomJson customJsonContent;
 
     public String getCmd() {
         return cmd;
@@ -65,30 +63,6 @@ public class DeviceStatusChangeEntity implements Serializable {
 
     public void setCmd(String cmd) {
         this.cmd = cmd;
-    }
-
-    public Wifi getWifi() {
-        return wifi;
-    }
-
-    public void setWifi(Wifi wifi) {
-        this.wifi = wifi;
-    }
-
-    public Ring getRing() {
-        return ring;
-    }
-
-    public void setRing(Ring ring) {
-        this.ring = ring;
-    }
-
-    public Battery getBattery() {
-        return battery;
-    }
-
-    public void setBattery(Battery battery) {
-        this.battery = battery;
     }
 
     public DeviceSettings getDevice_status() {
@@ -99,14 +73,20 @@ public class DeviceStatusChangeEntity implements Serializable {
         this.device_status = device_status;
     }
 
+    public GZWXCostomJson getCustomJsonContent() {
+        return customJsonContent;
+    }
+
+    public void setCustomJsonContent(GZWXCostomJson customJsonContent) {
+        this.customJsonContent = customJsonContent;
+    }
+
     @Override
     public String toString() {
         return "DeviceStatusChangeEntity{" +
                 "cmd='" + cmd + '\'' +
-                ", wifi=" + wifi +
-                ", ring=" + ring +
-                ", battery=" + battery +
                 ", device_status=" + device_status +
+                ", customJsonContent=" + customJsonContent +
                 '}';
     }
 

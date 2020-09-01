@@ -1,5 +1,33 @@
 package com.comaiot.net.library.bean;
 
-public class AppRemoveMessageEntity extends BaseAppEntity {
+import java.io.Serializable;
 
+public class AppRemoveMessageEntity implements Serializable {
+    private int errcode;
+    private String errmsg;
+
+
+    public int getErrcode() {
+        return errcode;
+    }
+
+    public void setErrcode(int errcode) {
+        this.errcode = errcode;
+    }
+
+    public String getErrmsg() {
+        return errmsg;
+    }
+
+    public void setErrmsg(String errmsg) {
+        this.errmsg = errmsg;
+    }
+
+    @Override
+    public String toString() {
+        return "AppRemoveMessageEntity{" +
+                "errcode=" + errcode +
+                ", errmsg='" + errmsg + '\'' +
+                '}';
+    }
 }

@@ -751,7 +751,6 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
-        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.AppRemoveMessageReq(aid, msgId, devUid, new CallBack<AppRemoveMessageEntity>() {
             @Override
             public void onStart() {

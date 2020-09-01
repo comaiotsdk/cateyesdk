@@ -2,6 +2,7 @@ package com.comaiot.net.library.core;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Base64;
 
 import com.comaiot.net.library.Model.DESUtils;
 import com.comaiot.net.library.bean.AppControlDevice;
@@ -91,7 +92,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -695,7 +695,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                                 String next = keys.next();
                                 JSONObject listJSONObject = list.getJSONObject(next);
                                 AppDownloadDevConfigEntity.Content content = GsonUtils.fromJson(listJSONObject.toString(), AppDownloadDevConfigEntity.Content.class);
-                                content.setSettings(GsonUtils.fromJson(new String(Base64.getDecoder().decode(content.getConfig())), DeviceSvrCacheSettings.class));
+                                content.setSettings(GsonUtils.fromJson(new String(Base64.decode(content.getConfig(), Base64.NO_WRAP)), DeviceSvrCacheSettings.class));
                                 contents.add(content);
                             }
 
@@ -802,6 +802,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                             String next = keys.next();
                             JSONObject objectJSONObject = object.getJSONObject(next);
                             DeviceEventListEntity entity = GsonUtils.fromJson(objectJSONObject.toString(), DeviceEventListEntity.class);
+                            entity.setMsg_id(next);
                             listEntities.add(entity);
                         }
                     }
@@ -909,7 +910,6 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppRemoveMessageReqView
      */
     public void deleteEvent(String aid, String msgId, String devUid, AppRemoveMessageReqView reqView) throws NoAttachViewException, NoInternetException {
-        if (!COMAIOT) return;
         catEyeController.AppRemoveMessageReq(aid, msgId, devUid, reqView);
     }
 
@@ -1588,6 +1588,8 @@ public class CatEyeSDKInterface implements CatEyeView {
         entity.setCallAlarmStatus(deviceSettings.getCallAlarmStatus());
         entity.setDeviceNickName(deviceSettings.getDeviceNickName());
         entity.setIntelligentNight(deviceSettings.getIntelligentNight());
+
+        entity.setCustomJsonContent(deviceSettings.getCustomJsonContent());
 
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         String json = GsonUtils.toJson(entity);

@@ -430,6 +430,7 @@ public class EasyMqttService {
                 if (cmdInfo.getCmd().equals("device_status_changed")) {
                     DeviceStatusChangeEntity deviceStatusChangeEntity = GsonUtils.fromJson(msgContent, DeviceStatusChangeEntity.class);
                     DeviceSettings deviceSettings = deviceStatusChangeEntity.getDevice_status();
+                    deviceSettings.setCustomJsonContent(deviceStatusChangeEntity.getCustomJsonContent());
                     if (null != CatEyeSDKInterface.get().getCacheMap()) {
                         Map<String, DeviceSettings> cacheMap = CatEyeSDKInterface.get().getCacheMap();
                         DeviceSettings settings = cacheMap.get(devUid);
@@ -458,6 +459,8 @@ public class EasyMqttService {
                         settings.setIntelligentNight(setDeviceSettingEntity.getIntelligentNight());
                         settings.setRing_light(setDeviceSettingEntity.getPerson_check().getRing_light_switch());
                         settings.setPerson_check(setDeviceSettingEntity.getPerson_check());
+
+                        settings.setCustomJsonContent(setDeviceSettingEntity.getCustomJsonContent());
 
                         if (MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback() != null) {
                             MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback().onGetDeviceSettings(devUid, settings);
