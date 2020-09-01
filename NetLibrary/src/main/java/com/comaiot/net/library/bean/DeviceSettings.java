@@ -23,7 +23,7 @@ public class DeviceSettings implements Serializable {
     private int intelligentNight;
     private int callAlarmStatus;        //1-open;2-close
     private int doorbellLight;          //1-open;2-close
-    private GZWXCostomJson customJsonContent;       //custom json content
+    private String customJsonContent;       //custom json content
 
     public String getDeviceId() {
         return deviceId;
@@ -129,11 +129,11 @@ public class DeviceSettings implements Serializable {
         this.doorbellLight = doorbellLight;
     }
 
-    public GZWXCostomJson getCustomJsonContent() {
-        return (GZWXCostomJson) customJsonContent;
+    public String getCustomJsonContent() {
+        return customJsonContent;
     }
 
-    public void setCustomJsonContent(GZWXCostomJson customJsonContent) {
+    public void setCustomJsonContent(String customJsonContent) {
         this.customJsonContent = customJsonContent;
     }
 

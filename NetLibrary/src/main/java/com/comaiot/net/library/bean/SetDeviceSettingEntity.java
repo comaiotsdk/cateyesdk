@@ -11,7 +11,7 @@ public class SetDeviceSettingEntity implements Serializable {
     private int intelligentNight;
     private int callAlarmStatus;    //1-open;2-close
     private int doorbellLight;     //1-open;2-close
-    private GZWXCostomJson customJsonContent;       //custom json content
+    private String customJsonContent;       //custom json content
 
     public String getCmd() {
         return cmd;
@@ -61,11 +61,11 @@ public class SetDeviceSettingEntity implements Serializable {
         this.doorbellLight = doorbellLight;
     }
 
-    public GZWXCostomJson getCustomJsonContent() {
+    public String getCustomJsonContent() {
         return customJsonContent;
     }
 
-    public void setCustomJsonContent(GZWXCostomJson customJsonContent) {
+    public void setCustomJsonContent(String customJsonContent) {
         this.customJsonContent = customJsonContent;
     }
 

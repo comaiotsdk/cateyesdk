@@ -22,7 +22,6 @@ import com.comaiot.net.library.bean.DeviceVideoReady;
 import com.comaiot.net.library.bean.DeviceWorkModeChangeEvent;
 import com.comaiot.net.library.core.MqttManagerInter;
 import com.comaiot.net.library.inter.GsonUtils;
-
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;

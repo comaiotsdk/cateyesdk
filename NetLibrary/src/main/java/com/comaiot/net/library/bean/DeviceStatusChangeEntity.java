@@ -55,7 +55,7 @@ import java.io.Serializable;
 public class DeviceStatusChangeEntity implements Serializable {
     private String cmd;
     private DeviceSettings device_status;
-    private GZWXCostomJson customJsonContent;
+    private String customJsonContent;
 
     public String getCmd() {
         return cmd;
@@ -73,11 +73,11 @@ public class DeviceStatusChangeEntity implements Serializable {
         this.device_status = device_status;
     }
 
-    public GZWXCostomJson getCustomJsonContent() {
+    public String getCustomJsonContent() {
         return customJsonContent;
     }
 
-    public void setCustomJsonContent(GZWXCostomJson customJsonContent) {
+    public void setCustomJsonContent(String customJsonContent) {
         this.customJsonContent = customJsonContent;
     }
 

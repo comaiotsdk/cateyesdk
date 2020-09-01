@@ -8,7 +8,7 @@ public class GZWXCostomJson extends CustomJson implements Serializable {
     private String devUid;
     private String sn;
     private String model;
-    private int switch_flag;
+    private int status_flag;
 
     public String getStart_time() {
         return start_time;
@@ -38,12 +38,12 @@ public class GZWXCostomJson extends CustomJson implements Serializable {
         return model;
     }
 
-    public int getSwitch_flag() {
-        return switch_flag;
+    public int getStatus_flag() {
+        return status_flag;
     }
 
-    public void setSwitch_flag(int switch_flag) {
-        this.switch_flag = switch_flag;
+    public void setStatus_flag(int status_flag) {
+        this.status_flag = status_flag;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class GZWXCostomJson extends CustomJson implements Serializable {
                 ", devUid='" + devUid + '\'' +
                 ", sn='" + sn + '\'' +
                 ", model='" + model + '\'' +
-                ", switch_flag=" + switch_flag +
+                ", status_flag=" + status_flag +
                 '}';
     }
 }

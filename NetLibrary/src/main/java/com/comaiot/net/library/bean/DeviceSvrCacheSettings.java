@@ -7,7 +7,7 @@ import java.io.Serializable;
 public class DeviceSvrCacheSettings implements Serializable {
     private DeviceStatus device_status;
     private FaceData faceData;
-    private GZWXCostomJson customJsonContent;
+    private String customJsonContent;
 
     public DeviceStatus getDevice_status() {
         return device_status;
@@ -25,11 +25,11 @@ public class DeviceSvrCacheSettings implements Serializable {
         this.faceData = faceData;
     }
 
-    public GZWXCostomJson getCustomJsonContent() {
+    public String getCustomJsonContent() {
         return customJsonContent;
     }
 
-    public void setCustomJsonContent(GZWXCostomJson customJsonContent) {
+    public void setCustomJsonContent(String customJsonContent) {
         this.customJsonContent = customJsonContent;
     }
 
