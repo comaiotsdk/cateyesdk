@@ -6,6 +6,7 @@ public class ConfigDeviceRegisterFaceNameInfo implements Serializable {
     private String cmd;
     private String faceName;
     private int other;
+    private int status;
 
     public String getCmd() {
         return cmd;
@@ -31,12 +32,21 @@ public class ConfigDeviceRegisterFaceNameInfo implements Serializable {
         this.other = other;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "ConfigDeviceRegisterFaceNameInfo{" +
                 "cmd='" + cmd + '\'' +
                 ", faceName='" + faceName + '\'' +
                 ", other=" + other +
+                ", status=" + status +
                 '}';
     }
 }
