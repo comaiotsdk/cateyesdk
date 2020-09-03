@@ -2,6 +2,7 @@ package com.comaiot.net.library.core;
 
 import android.content.Context;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.Base64;
 
 import com.comaiot.net.library.Model.DESUtils;
@@ -9,6 +10,8 @@ import com.comaiot.net.library.bean.AppControlDevice;
 import com.comaiot.net.library.bean.AppReceiveShareEntity;
 import com.comaiot.net.library.bean.AppSubscribeEntity;
 import com.comaiot.net.library.bean.CmdInfo;
+import com.comaiot.net.library.bean.ConfigDeviceRegisterFaceNameInfo;
+import com.comaiot.net.library.bean.CustomBase64JsonContent;
 import com.comaiot.net.library.bean.DeviceStatusChangeEntity;
 import com.comaiot.net.library.bean.DeviceSvrCacheSettings;
 import com.comaiot.net.library.bean.GetDeviceStatusEntity;
@@ -1501,6 +1504,25 @@ public class CatEyeSDKInterface implements CatEyeView {
         mqttManager.publish(topic, json, false, 2);
     }
 
+    public void registerFace(String devUid) {
+        String topic = MqttUtils.getAppPubAllTopic(devUid);
+        AppControlDevice controlDevice = new AppControlDevice();
+        controlDevice.setControl_type(5);
+        controlDevice.setCmd("control_device");
+        String json = GsonUtils.toJson(controlDevice);
+        mqttManager.publish(topic, json, false, 2);
+    }
+
+    public void configDeviceRegisterFace(String devUid, String name, int alarmSwitchStatus) {
+        String topic = MqttUtils.getAppPubAllTopic(devUid);
+        ConfigDeviceRegisterFaceNameInfo configDeviceRegisterFaceNameInfo = new ConfigDeviceRegisterFaceNameInfo();
+        configDeviceRegisterFaceNameInfo.setCmd("set_device_face_name");
+        configDeviceRegisterFaceNameInfo.setFaceName(name);
+        configDeviceRegisterFaceNameInfo.setOther(alarmSwitchStatus);
+        String json = GsonUtils.toJson(configDeviceRegisterFaceNameInfo);
+        mqttManager.publish(topic, json, false, 2);
+    }
+
     /**
      * 重启设备
      *
@@ -1624,6 +1646,20 @@ public class CatEyeSDKInterface implements CatEyeView {
         DeviceWorkModeChangeEvent event = new DeviceWorkModeChangeEvent();
         event.setCmd("set_device_work_mode");
         event.setWorkMode(work_Mode);
+        String json = GsonUtils.toJson(event);
+        mqttManager.publish(topic, json, false, 2);
+    }
+
+    /**
+     * @param devUid
+     * @param base64CustomJson base64之后的json字符串 规则：Base64.NO_WRAP
+     */
+    public void sendCustomJson(String devUid, String base64CustomJson) {
+        String topic = MqttUtils.getAppPubAllTopic(devUid);
+        if (TextUtils.isEmpty(base64CustomJson)) return;
+        CustomBase64JsonContent event = new CustomBase64JsonContent();
+        event.setCmd("base64_custom_json");
+        event.setBase64_custom_json(base64CustomJson);
         String json = GsonUtils.toJson(event);
         mqttManager.publish(topic, json, false, 2);
     }

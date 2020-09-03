@@ -5,7 +5,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.comaiot.net.library.bean.AppControlDevice;
 import com.comaiot.net.library.bean.CmdInfo;
+import com.comaiot.net.library.bean.ConfigDeviceRegisterFaceNameInfo;
+import com.comaiot.net.library.bean.CustomBase64JsonContent;
+import com.comaiot.net.library.bean.DevRegisterFaceInfo;
 import com.comaiot.net.library.bean.DeviceStatusChangeEntity;
 import com.comaiot.net.library.bean.SetDeviceSettingEntity;
 import com.comaiot.net.library.bean.UpdateDeviceEntity;
@@ -22,6 +26,8 @@ import com.comaiot.net.library.bean.DeviceVideoReady;
 import com.comaiot.net.library.bean.DeviceWorkModeChangeEvent;
 import com.comaiot.net.library.core.MqttManagerInter;
 import com.comaiot.net.library.inter.GsonUtils;
+import com.google.gson.Gson;
+
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -550,6 +556,38 @@ public class EasyMqttService {
                 Log.i(TAG, "messageArrived: UpdateVersionUpload cmd Arrived UpdateVersionInfo= " + (null == updateVersionInfo ? "updateVersionInfo is null" : updateVersionInfo.toString()));
                 if (null != MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback()) {
                     MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback().onDeviceUpdateInfo(devUid, updateVersionInfo);
+                }
+            } else if (cmdInfo.getCmd().equals("base64_custom_json")) {
+                Log.i(TAG, "messageArrived: base64_custom_json cmd Arrived");
+                CustomBase64JsonContent customBase64JsonContent = GsonUtils.fromJson(msgContent, CustomBase64JsonContent.class);
+                Log.i(TAG, "messageArrived: base64_custom_json cmd Arrived CustomBase64JsonContent= " + (null == customBase64JsonContent ? "customBase64JsonContent is null" : customBase64JsonContent.toString()));
+
+                if (null != MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback()) {
+                    MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback().onDeviceCustomMessageArrived(devUid, customBase64JsonContent);
+                }
+            } else if (cmdInfo.getCmd().equals("control_device")) {
+                Log.i(TAG, "messageArrived: control_device cmd Arrived");
+                AppControlDevice appControlDevice = GsonUtils.fromJson(msgContent, AppControlDevice.class);
+                Log.i(TAG, "messageArrived: control_device cmd Arrived AppControlDevice= " + (null == appControlDevice ? "appControlDevice is null" : appControlDevice.toString()));
+
+                if (null != appControlDevice && appControlDevice.getControl_type() == 5 && null != MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback()) {
+                    MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback().onDeviceJoinRegisterFaceCallback(devUid, appControlDevice);
+                }
+            } else if (cmdInfo.getCmd().equals("dev_face_upload")) {
+                Log.i(TAG, "messageArrived: dev_face_upload cmd Arrived");
+                DevRegisterFaceInfo devRegisterFaceInfo = GsonUtils.fromJson(msgContent, DevRegisterFaceInfo.class);
+                Log.i(TAG, "messageArrived: dev_face_upload cmd Arrived AppControlDevice= " + (null == devRegisterFaceInfo ? "devRegisterFaceInfo is null" : devRegisterFaceInfo.toString()));
+
+                if (null != MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback()) {
+                    MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback().onDeviceRegisterFaceProgress(devUid, devRegisterFaceInfo);
+                }
+            } else if (cmdInfo.getCmd().equals("set_device_face_name")) {
+                Log.i(TAG, "messageArrived: set_device_face_name cmd Arrived");
+                ConfigDeviceRegisterFaceNameInfo faceNameInfo = GsonUtils.fromJson(msgContent, ConfigDeviceRegisterFaceNameInfo.class);
+                Log.i(TAG, "messageArrived: set_device_face_name cmd Arrived ConfigDeviceRegisterFaceNameInfo= " + (null == faceNameInfo ? "faceNameInfo is null" : faceNameInfo.toString()));
+
+                if (null != MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback()) {
+                    MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback().onConfigDeviceRegisterFaceInfoCallback(devUid, faceNameInfo);
                 }
             }
         }

@@ -1,6 +1,10 @@
 package com.comaiot.net.library.core;
 
+import com.comaiot.net.library.bean.AppControlDevice;
 import com.comaiot.net.library.bean.AudioCallEvent;
+import com.comaiot.net.library.bean.ConfigDeviceRegisterFaceNameInfo;
+import com.comaiot.net.library.bean.CustomBase64JsonContent;
+import com.comaiot.net.library.bean.DevRegisterFaceInfo;
 import com.comaiot.net.library.bean.DeviceAlarmEvent;
 import com.comaiot.net.library.bean.DeviceOnlineEvent;
 import com.comaiot.net.library.bean.DeviceRemoveEvent;
@@ -122,4 +126,37 @@ public interface CatEysListener {
      * @param devUid 设备devUid
      */
     void onDeviceUpdateInfo(String devUid, UpdateVersionInfo info);
+
+    /**
+     * 猫眼端自定义消息到达
+     *
+     * @param devUid  设备devUid
+     * @param content base64后的自定义json字符串 规则：Base64.NO_WRAP
+     */
+    void onDeviceCustomMessageArrived(String devUid, CustomBase64JsonContent content);
+
+
+    /**
+     * 猫眼端进入录入人脸模式回调
+     *
+     * @param devUid        设备devUid
+     * @param controlDevice
+     */
+    void onDeviceJoinRegisterFaceCallback(String devUid, AppControlDevice controlDevice);
+
+    /**
+     * 猫眼端录入人脸信息回调
+     *
+     * @param devUid              设备devUid
+     * @param devRegisterFaceInfo
+     */
+    void onDeviceRegisterFaceProgress(String devUid, DevRegisterFaceInfo devRegisterFaceInfo);
+
+    /**
+     * 猫眼端录入人脸数据属性回调信息
+     *
+     * @param devUid               设备devUid
+     * @param registerFaceNameInfo
+     */
+    void onConfigDeviceRegisterFaceInfoCallback(String devUid, ConfigDeviceRegisterFaceNameInfo registerFaceNameInfo);
 }
