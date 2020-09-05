@@ -917,6 +917,18 @@ public class CatEyeSDKInterface implements CatEyeView {
     }
 
     /**
+     * 删除全部的图片消息
+     *
+     * @param aid     APP Access ID，APP绑定在不同设备下的标识ID：=8位字串
+     * @param devUid  设备标识 := 12位字串-8位字串
+     * @param reqView 请求回调
+     * @see AppRemoveMessageReqView
+     */
+    public void deleteAllEvent(String aid, String devUid, AppRemoveMessageReqView reqView) throws NoAttachViewException, NoInternetException {
+        catEyeController.AppRemoveMessageReq(aid, "ALL", devUid, reqView);
+    }
+
+    /**
      * APP 删除的图片消息列表
      *
      * @param reqView 请求回调
@@ -1029,6 +1041,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppShareDeviceReqView
      */
     public void createShareDeviceQr(String aid, String devUid, AppShareDeviceReqView reqView) throws NoAttachViewException, NoInternetException {
+        if (!COMAIOT) return;
         catEyeController.AppShareDeviceReq(aid, devUid, reqView);
     }
 
@@ -1251,8 +1264,8 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @throws NoInternetException
      * @see PartnerShareDeviceReqView
      */
-    public void partNerShareDevice(String devUid, String phoneNumber, String jwt, PartnerShareDeviceReqView reqView) throws NoAttachViewException, NoInternetException {
-        catEyeController.PartnerShareDeviceReq(devUid, phoneNumber, jwt, reqView);
+    public void partNerShareDevice(String devUid, String phoneNumber, String jwt, String nickName, PartnerShareDeviceReqView reqView) throws NoAttachViewException, NoInternetException {
+        catEyeController.PartnerShareDeviceReq(devUid, phoneNumber, jwt, nickName, reqView);
     }
 
     /**

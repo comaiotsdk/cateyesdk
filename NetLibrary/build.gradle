@@ -7,7 +7,7 @@ android {
         minSdkVersion 18
         targetSdkVersion 28
         versionCode 39
-        versionName "1.1.3"
+        versionName "1.1.5"
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
@@ -28,7 +28,7 @@ android {
     }
 
     def SDK_NAME = 'comaiot_cat_eye_sdk'
-    def SDK_VERSION = '_V1.1.3'
+    def SDK_VERSION = '_V1.1.5'
 
     android.libraryVariants.all { variant ->
         variant.outputs.all {
@@ -60,7 +60,7 @@ dependencies {
 }
 
 def SDK_NAME = 'comaiot_cat_eye_sdk'
-def SDK_VERSION = '_V1.1.3'
+def SDK_VERSION = '_V1.1.5'
 
 task deleteBuild(type: Delete) {
     delete "build/libs/" + SDK_NAME + SDK_VERSION + ".jar"

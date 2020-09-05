@@ -766,8 +766,13 @@ public class CatEyeController<V extends CatEyeView> {
 
             @Override
             public void onError(String msg) {
-                if (isViewAttached() && null != reqView)
-                    reqView.onRequestError(msg, "deleteEvent");
+                if (isViewAttached() && null != reqView) {
+                    if ("ALL".equals(msgId)) {
+                        reqView.onRequestError(msg, "deleteAllEvent");
+                    } else {
+                        reqView.onRequestError(msg, "deleteEvent");
+                    }
+                }
             }
 
             @Override
@@ -856,7 +861,7 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
-
+        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.AppShareDeviceReq(appAid, devUid, new CallBack<AppShareDeviceEntity>() {
             @Override
             public void onStart() {
@@ -1402,7 +1407,7 @@ public class CatEyeController<V extends CatEyeView> {
         });
     }
 
-    public void PartnerShareDeviceReq(String devUid, String phone_num, String jwt, PartnerShareDeviceReqView reqView) throws NoInternetException, NoAttachViewException {
+    public void PartnerShareDeviceReq(String devUid, String phone_num, String jwt, String nickName, PartnerShareDeviceReqView reqView) throws NoInternetException, NoAttachViewException {
         if (!AppUtils.isHaveInternet(CatEyeSDKInterface.get().getContext())) {
             throw new NoInternetException();
         }
@@ -1410,7 +1415,7 @@ public class CatEyeController<V extends CatEyeView> {
             throw new NoAttachViewException();
         }
 
-        CatEyeModel.PartnerShareDeviceReq(devUid, phone_num, jwt, new CallBack<PartnerShareDeviceEntity>() {
+        CatEyeModel.PartnerShareDeviceReq(devUid, phone_num, jwt, nickName, new CallBack<PartnerShareDeviceEntity>() {
             @Override
             public void onStart() {
                 if (isViewAttached())

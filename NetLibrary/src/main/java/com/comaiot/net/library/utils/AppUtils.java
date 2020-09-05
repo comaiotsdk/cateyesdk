@@ -27,4 +27,15 @@ public class AppUtils {
             return false;
         }
     }
+
+    public static boolean checkAccountMaster(String app_aid, String dev_uid) {
+        String substring = dev_uid.substring(dev_uid.indexOf("-") + 1, dev_uid.length());
+        return isAccountMaster(app_aid, substring);
+    }
+
+    private static boolean isAccountMaster(String s1, String s2) {
+        boolean ret = false;
+        if (s1 == null || s2 == null) return ret;
+        return s1.equals(s2);
+    }
 }

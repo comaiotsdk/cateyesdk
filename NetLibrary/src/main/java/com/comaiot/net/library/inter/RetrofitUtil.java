@@ -809,6 +809,7 @@ public class RetrofitUtil {
     }
 
     public void AppShareDeviceReq(Subscriber<AppShareDeviceEntity> subscriber, String appAid, String devUid) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         AppShareDeviceParams params = new AppShareDeviceParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
@@ -1018,13 +1019,14 @@ public class RetrofitUtil {
                 .subscribe(subscriber);
     }
 
-    public void PartnerShareDeviceReq(Subscriber<PartnerShareDeviceEntity> subscriber, String dev_uid, String phone_num, String jwt_token) {
+    public void PartnerShareDeviceReq(Subscriber<PartnerShareDeviceEntity> subscriber, String dev_uid, String phone_num, String jwt_token, String nickName) {
         PartnerShareDeviceParams params = new PartnerShareDeviceParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());
         params.setToken(CatEyePreferences.get().getToken());
         params.setDev_uid(dev_uid);
         params.setPhone_num(phone_num);
+        params.setNickname(nickName);
         params.setJwt_token(jwt_token);
         String json = GsonUtils.toJson(params);
         Logger.ee("PartnerShareDeviceReq Json : \n" + json);

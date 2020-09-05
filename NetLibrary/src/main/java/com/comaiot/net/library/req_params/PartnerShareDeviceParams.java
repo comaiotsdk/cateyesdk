@@ -6,6 +6,7 @@ public class PartnerShareDeviceParams {
     private String token;
     private String dev_uid;
     private String phone_num;
+    private String nickname;
     private String jwt_token;
 
     public String getApp_uid() {
@@ -48,6 +49,14 @@ public class PartnerShareDeviceParams {
         this.phone_num = phone_num;
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     public String getJwt_token() {
         return jwt_token;
     }
@@ -58,12 +67,13 @@ public class PartnerShareDeviceParams {
 
     @Override
     public String toString() {
-        return "Content{" +
+        return "PartnerShareDeviceParams{" +
                 "app_uid='" + app_uid + '\'' +
                 ", app_envid='" + app_envid + '\'' +
                 ", token='" + token + '\'' +
                 ", dev_uid='" + dev_uid + '\'' +
                 ", phone_num='" + phone_num + '\'' +
+                ", nickname='" + nickname + '\'' +
                 ", jwt_token='" + jwt_token + '\'' +
                 '}';
     }

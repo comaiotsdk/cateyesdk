@@ -921,6 +921,7 @@ public class CatEyeModel {
     }
 
     public static void AppShareDeviceReq(String appAid, String devUid, CallBack<AppShareDeviceEntity> callBack) {
+        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppShareDeviceEntity> mEntitySubscriber = new Subscriber<AppShareDeviceEntity>() {
 
             @Override
@@ -1354,7 +1355,7 @@ public class CatEyeModel {
         RetrofitUtil.getInstance().LoginByPhone(mEntitySubscriber, appUid, appEnvid, subscribe_type, phoneNumber, password, push_id, type);
     }
 
-    public static void PartnerShareDeviceReq(String devUid, String phone_num, String jwt, CallBack<PartnerShareDeviceEntity> callBack) {
+    public static void PartnerShareDeviceReq(String devUid, String phone_num, String jwt, String nickName, CallBack<PartnerShareDeviceEntity> callBack) {
         Subscriber<PartnerShareDeviceEntity> mEntitySubscriber = new Subscriber<PartnerShareDeviceEntity>() {
 
             @Override
@@ -1384,7 +1385,7 @@ public class CatEyeModel {
                 }
             }
         };
-        RetrofitUtil.getInstance().PartnerShareDeviceReq(mEntitySubscriber, devUid, phone_num, jwt);
+        RetrofitUtil.getInstance().PartnerShareDeviceReq(mEntitySubscriber, devUid, phone_num, jwt, nickName);
     }
 
     public static void PartnerChangePhoneReq(String phoneNumber, String jwt, CallBack<PartnerChangePhoneEntity> callBack) {
