@@ -14,7 +14,6 @@ import com.comaiot.net.library.bean.ConfigDeviceRegisterFaceNameInfo;
 import com.comaiot.net.library.bean.CustomBase64JsonContent;
 import com.comaiot.net.library.bean.DeviceStatusChangeEntity;
 import com.comaiot.net.library.bean.DeviceSvrCacheSettings;
-import com.comaiot.net.library.bean.GetDeviceStatusEntity;
 import com.comaiot.net.library.bean.SetDeviceSettingEntity;
 import com.comaiot.net.library.controller.AppUtils;
 import com.comaiot.net.library.controller.CatEyeController;
@@ -39,7 +38,6 @@ import com.comaiot.net.library.controller.view.PartnerShareDeviceReqView;
 import com.comaiot.net.library.controller.view.PartnerWeixinPushConfigReqView;
 import com.comaiot.net.library.controller.view.PartnerWeixinPushNoticeReqView;
 import com.comaiot.net.library.controller.view.SmsTokenReqView;
-import com.comaiot.net.library.inter.BaseUrl;
 import com.comaiot.net.library.inter.GsonUtils;
 import com.comaiot.net.library.inter.OkHttpCallback;
 import com.comaiot.net.library.inter.OkHttpUtils;
@@ -93,6 +91,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -146,6 +145,8 @@ public class CatEyeSDKInterface implements CatEyeView {
         } else {
             CatEyePreferences.get().setRegisterDeviceStatus(true);
         }
+
+
         mqttManager = MqttManagerInter.getInstance(mContext);
     }
 
@@ -1041,7 +1042,6 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @see AppShareDeviceReqView
      */
     public void createShareDeviceQr(String aid, String devUid, AppShareDeviceReqView reqView) throws NoAttachViewException, NoInternetException {
-        if (!COMAIOT) return;
         catEyeController.AppShareDeviceReq(aid, devUid, reqView);
     }
 
@@ -1077,7 +1077,13 @@ public class CatEyeSDKInterface implements CatEyeView {
 
         if (shareNum == null && shareToken != null) {
             params.setReceive_type("barcode");
-            params.setShare_token(shareToken);
+
+            String share_token = new String(Base64.decode(URLDecoder.decode(shareToken), Base64.DEFAULT));
+            int index = share_token.indexOf("=");
+            String token = share_token.substring(index + 1, share_token.length());
+            Logger.dd("share_token= " + token);
+
+            params.setShare_token(token);
         } else if (shareToken == null && shareNum != null) {
             params.setReceive_type("num");
             params.setShare_num(shareNum);
@@ -1086,7 +1092,7 @@ public class CatEyeSDKInterface implements CatEyeView {
         }
 
         String json = GsonUtils.toJson(params);
-
+        Logger.dd("AppReceiveShareReq json: " + json);
         OkHttpUtils.getInstance(mContext).post(json, postUrl, new OkHttpCallback() {
             @Override
             public void onSuccess(JSONObject oriData) {
@@ -1095,7 +1101,7 @@ public class CatEyeSDKInterface implements CatEyeView {
                     String errmsg = oriData.getString("errmsg");
                     if (errcode != 0 && null != catEysListener && null != reqView) {
                         catEysListener.onHttpRequestFailed("joinScanShareDeviceQr", "The Server is return " + errcode + " , errMsg is " + errmsg);
-                        reqView.onRequestError(errcode + "", "getDeviceEventList");
+                        reqView.onRequestError(errcode + "", "joinScanShareDeviceQr");
                         return;
                     }
                     AppReceiveShareEntity entity = new AppReceiveShareEntity();
@@ -1131,7 +1137,7 @@ public class CatEyeSDKInterface implements CatEyeView {
             @Override
             public void onFailure(Exception e) {
                 if (null != catEysListener) {
-                    catEysListener.onHttpRequestFailed("getDeletedEventList", e.toString());
+                    catEysListener.onHttpRequestFailed("joinScanShareDeviceQr", e.toString());
                 }
             }
         });

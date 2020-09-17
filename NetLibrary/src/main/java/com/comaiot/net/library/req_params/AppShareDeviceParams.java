@@ -6,7 +6,6 @@ public class AppShareDeviceParams extends BaseJsonParams{
     private String app_aid;
     private String token;
     private String dev_uid;
-    private Integer timestamp;
 
     public String getApp_uid() {
         return app_uid;
@@ -48,14 +47,6 @@ public class AppShareDeviceParams extends BaseJsonParams{
         this.dev_uid = dev_uid;
     }
 
-    public Integer getTime_stamp() {
-        return timestamp;
-    }
-
-    public void setTime_stamp(Integer timestamp) {
-        this.timestamp = timestamp;
-    }
-
     @Override
     public String toString() {
         return "AppShareDeviceParams{" +
@@ -64,7 +55,6 @@ public class AppShareDeviceParams extends BaseJsonParams{
                 ", app_aid='" + app_aid + '\'' +
                 ", token='" + token + '\'' +
                 ", dev_uid='" + dev_uid + '\'' +
-                ", timestamp='" + timestamp + '\'' +
                 '}';
     }
 }

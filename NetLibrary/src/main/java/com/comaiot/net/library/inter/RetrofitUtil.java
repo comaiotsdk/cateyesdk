@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.util.Base64;
 
-import com.comaiot.net.library.Model.DESUtils;
 import com.comaiot.net.library.bean.ArogaBean;
 import com.comaiot.net.library.core.CatEyeSDKInterface;
 import com.comaiot.net.library.utils.Logger;
@@ -24,7 +23,6 @@ import com.comaiot.net.library.bean.AppQueryAidBindEntity;
 import com.comaiot.net.library.bean.AppQueryDevConnectEntity;
 import com.comaiot.net.library.bean.AppQueryPushAccountEntity;
 import com.comaiot.net.library.bean.AppQuerySharedDeviceEntity;
-import com.comaiot.net.library.bean.AppReceiveShareEntity;
 import com.comaiot.net.library.bean.AppRefreshTokenEntity;
 import com.comaiot.net.library.bean.AppRemoveAccountEntity;
 import com.comaiot.net.library.bean.AppRemoveAidEntity;
@@ -53,13 +51,11 @@ import com.comaiot.net.library.req_params.AppChangeAccountInfoParams;
 import com.comaiot.net.library.req_params.AppChangePasswordParams;
 import com.comaiot.net.library.req_params.AppChangePhoneParams;
 import com.comaiot.net.library.req_params.AppDownloadConfigParams;
-import com.comaiot.net.library.req_params.AppDownloadDevConfigEntity;
 import com.comaiot.net.library.req_params.AppDownloadDevConfigParams;
 import com.comaiot.net.library.req_params.AppEmailSubscribeReqParams;
 import com.comaiot.net.library.req_params.AppQueryAccountParams;
 import com.comaiot.net.library.req_params.AppQueryAidBindParams;
 import com.comaiot.net.library.req_params.AppQueryPushAccountParams;
-import com.comaiot.net.library.req_params.AppReceiveShareParams;
 import com.comaiot.net.library.req_params.AppRemoveAccountParams;
 import com.comaiot.net.library.req_params.AppRemoveAidParams;
 import com.comaiot.net.library.req_params.AppRemoveMessageReqParams;
@@ -77,7 +73,6 @@ import com.comaiot.net.library.req_params.PartnerWeixinPushNoticeParams;
 import com.comaiot.net.library.req_params.RegParams;
 import com.comaiot.net.library.req_params.SmsParams;
 import com.comaiot.net.library.req_params.StorageParams;
-import com.comaiot.net.library.req_params.CatEyeLoginParams;
 import com.comaiot.net.library.util.ConfigProperties;
 
 import java.io.File;
@@ -107,25 +102,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-
-import static com.comaiot.net.library.Model.DESUtils.AITE;
-import static com.comaiot.net.library.Model.DESUtils.DAYIN;
-import static com.comaiot.net.library.Model.DESUtils.DESHIMAN;
-import static com.comaiot.net.library.Model.DESUtils.FANGHUI;
-import static com.comaiot.net.library.Model.DESUtils.GVS;
-import static com.comaiot.net.library.Model.DESUtils.HONYAR;
-import static com.comaiot.net.library.Model.DESUtils.HUNE;
-import static com.comaiot.net.library.Model.DESUtils.IFLYTEK;
-import static com.comaiot.net.library.Model.DESUtils.IWR;
-import static com.comaiot.net.library.Model.DESUtils.JIANSHI;
-import static com.comaiot.net.library.Model.DESUtils.KUNSHANG;
-import static com.comaiot.net.library.Model.DESUtils.LEIXUNKEWEI;
-import static com.comaiot.net.library.Model.DESUtils.MANYA;
-import static com.comaiot.net.library.Model.DESUtils.PHILIPS;
-import static com.comaiot.net.library.Model.DESUtils.RUDOLPH;
-import static com.comaiot.net.library.Model.DESUtils.RUOCHAN;
-import static com.comaiot.net.library.Model.DESUtils.YD;
-import static com.comaiot.net.library.Model.DESUtils.ZHOUYAYUN;
 
 
 @SuppressWarnings("all")
@@ -809,7 +785,6 @@ public class RetrofitUtil {
     }
 
     public void AppShareDeviceReq(Subscriber<AppShareDeviceEntity> subscriber, String appAid, String devUid) {
-        if (!CatEyeSDKInterface.COMAIOT) return;
         AppShareDeviceParams params = new AppShareDeviceParams();
         params.setApp_uid(CatEyePreferences.get().getAppUid());
         params.setApp_envid(CatEyePreferences.get().getAppEnvid());

@@ -21,7 +21,6 @@ import com.comaiot.net.library.bean.AppQueryAidBindEntity;
 import com.comaiot.net.library.bean.AppQueryDevConnectEntity;
 import com.comaiot.net.library.bean.AppQueryPushAccountEntity;
 import com.comaiot.net.library.bean.AppQuerySharedDeviceEntity;
-import com.comaiot.net.library.bean.AppReceiveShareEntity;
 import com.comaiot.net.library.bean.AppRefreshTokenEntity;
 import com.comaiot.net.library.bean.AppRemoveAccountEntity;
 import com.comaiot.net.library.bean.AppRemoveAidEntity;
@@ -42,7 +41,6 @@ import com.comaiot.net.library.bean.PartnerWeixinPushNoticeEntity;
 import com.comaiot.net.library.bean.SmsEntity;
 import com.comaiot.net.library.bean.StorageEntity;
 import com.comaiot.net.library.inter.CallBack;
-import com.comaiot.net.library.req_params.AppDownloadDevConfigEntity;
 import com.comaiot.net.library.controller.view.AgoraLicensesView;
 import com.comaiot.net.library.controller.view.AppAidReqView;
 import com.comaiot.net.library.controller.view.AppBarcodeReqView;
@@ -52,14 +50,12 @@ import com.comaiot.net.library.controller.view.AppChangeAccountInfoReqView;
 import com.comaiot.net.library.controller.view.AppChangePasswordReqView;
 import com.comaiot.net.library.controller.view.AppChangePhoneReqView;
 import com.comaiot.net.library.controller.view.AppDownloadConfigReqView;
-import com.comaiot.net.library.controller.view.AppDownloadDevConfigReqView;
 import com.comaiot.net.library.controller.view.AppEmailSubScribeReqView;
 import com.comaiot.net.library.controller.view.AppQueryAccountReqView;
 import com.comaiot.net.library.controller.view.AppQueryAidBindRquView;
 import com.comaiot.net.library.controller.view.AppQueryDevConnectReqView;
 import com.comaiot.net.library.controller.view.AppQueryPushAccountReqView;
 import com.comaiot.net.library.controller.view.AppQuerySharedDeviceReqView;
-import com.comaiot.net.library.controller.view.AppReceiveShareReqView;
 import com.comaiot.net.library.controller.view.AppRefreshTokenView;
 import com.comaiot.net.library.controller.view.AppRemoveAccountReqView;
 import com.comaiot.net.library.controller.view.AppRemoveAidReqView;
@@ -861,7 +857,6 @@ public class CatEyeController<V extends CatEyeView> {
         if (!isViewAttached()) {
             throw new NoAttachViewException();
         }
-        if (!CatEyeSDKInterface.COMAIOT) return;
         CatEyeModel.AppShareDeviceReq(appAid, devUid, new CallBack<AppShareDeviceEntity>() {
             @Override
             public void onStart() {

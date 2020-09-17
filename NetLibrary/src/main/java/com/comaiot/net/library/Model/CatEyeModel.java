@@ -21,7 +21,6 @@ import com.comaiot.net.library.bean.AppQueryAidBindEntity;
 import com.comaiot.net.library.bean.AppQueryDevConnectEntity;
 import com.comaiot.net.library.bean.AppQueryPushAccountEntity;
 import com.comaiot.net.library.bean.AppQuerySharedDeviceEntity;
-import com.comaiot.net.library.bean.AppReceiveShareEntity;
 import com.comaiot.net.library.bean.AppRefreshTokenEntity;
 import com.comaiot.net.library.bean.AppRemoveAccountEntity;
 import com.comaiot.net.library.bean.AppRemoveAidEntity;
@@ -44,7 +43,6 @@ import com.comaiot.net.library.bean.SmsEntity;
 import com.comaiot.net.library.bean.StorageEntity;
 import com.comaiot.net.library.prfs.GeneralPreferences;
 import com.comaiot.net.library.prfs.CatEyePreferences;
-import com.comaiot.net.library.req_params.AppDownloadDevConfigEntity;
 import com.comaiot.net.library.utils.Logger;
 
 import rx.Subscriber;
@@ -921,7 +919,6 @@ public class CatEyeModel {
     }
 
     public static void AppShareDeviceReq(String appAid, String devUid, CallBack<AppShareDeviceEntity> callBack) {
-        if (!CatEyeSDKInterface.COMAIOT) return;
         Subscriber<AppShareDeviceEntity> mEntitySubscriber = new Subscriber<AppShareDeviceEntity>() {
 
             @Override
