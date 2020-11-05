@@ -13,6 +13,7 @@ public class PartNerQueryDevice implements Serializable {
     private String deviceName;
     private int rssi;
     private String wifiName;
+    private int battery;
 
     public String getApp_uid() {
         return app_uid;
@@ -94,6 +95,14 @@ public class PartNerQueryDevice implements Serializable {
         this.wifiName = wifiName;
     }
 
+    public int getBattery() {
+        return battery;
+    }
+
+    public void setBattery(int battery) {
+        this.battery = battery;
+    }
+
     @Override
     public String toString() {
         return "PartNerQueryDevice{" +
@@ -107,6 +116,7 @@ public class PartNerQueryDevice implements Serializable {
                 ", deviceName='" + deviceName + '\'' +
                 ", rssi=" + rssi +
                 ", wifiName='" + wifiName + '\'' +
+                ", battery=" + battery +
                 '}';
     }
 }
