@@ -176,9 +176,12 @@ public class MqttManagerInter {
         return mClientId;
     }
 
-    public void reconnect() {
+    public boolean reconnect() {
         resetConnection();
         createConnection();
+        if (null == mEasyMqttService) return false;
         mEasyMqttService.connect();
+
+        return true;
     }
 }

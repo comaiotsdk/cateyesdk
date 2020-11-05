@@ -1504,35 +1504,56 @@ public class CatEyeSDKInterface implements CatEyeView {
      *
      * @param devUid 设备的devUid
      */
-    public void openDeviceVideo(String devUid) {
+    public boolean openDeviceVideo(String devUid) throws NullPointerException {
+        if (null == devUid) throw new NullPointerException("Device Id not support null.");
+        if (null == mqttManager)
+            throw new NullPointerException("Connection Lost.Please check SDK is inited");
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         CmdInfo cmdInfo = new CmdInfo();
         cmdInfo.setCmd("open_video");
         cmdInfo.setDevUid(devUid);
+        cmdInfo.setClientId(CatEyePreferences.get().getAppUid() + "-" + CatEyePreferences.get().getAppEnvid());
         cmdInfo.setCreateTime(System.currentTimeMillis());
         String json = GsonUtils.toJson(cmdInfo);
         mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
     }
 
-    public void reportAudio(String devUid) {
+    public boolean hangUpAudio(String devUid) {
+        String topic = MqttUtils.getAppPubAllTopic(devUid);
+        AppControlDevice controlDevice = new AppControlDevice();
+        controlDevice.setControl_type(2);
+        controlDevice.setCmd("control_device");
+        String json = GsonUtils.toJson(controlDevice);
+        mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
+    }
+
+    public boolean reportAudio(String devUid) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         AppControlDevice controlDevice = new AppControlDevice();
         controlDevice.setControl_type(4);
         controlDevice.setCmd("control_device");
         String json = GsonUtils.toJson(controlDevice);
         mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
     }
 
-    public void registerFace(String devUid) {
+    public boolean registerFace(String devUid) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         AppControlDevice controlDevice = new AppControlDevice();
         controlDevice.setControl_type(5);
         controlDevice.setCmd("control_device");
         String json = GsonUtils.toJson(controlDevice);
         mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
     }
 
-    public void configDeviceRegisterFace(String devUid, String name, int alarmSwitchStatus) {
+    public boolean configDeviceRegisterFace(String devUid, String name, int alarmSwitchStatus) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         ConfigDeviceRegisterFaceNameInfo configDeviceRegisterFaceNameInfo = new ConfigDeviceRegisterFaceNameInfo();
         configDeviceRegisterFaceNameInfo.setCmd("set_device_face_name");
@@ -1540,6 +1561,8 @@ public class CatEyeSDKInterface implements CatEyeView {
         configDeviceRegisterFaceNameInfo.setOther(alarmSwitchStatus);
         String json = GsonUtils.toJson(configDeviceRegisterFaceNameInfo);
         mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
     }
 
     /**
@@ -1547,13 +1570,15 @@ public class CatEyeSDKInterface implements CatEyeView {
      *
      * @param devUid 设备的devUid
      */
-    public void restartDevice(String devUid) {
+    public boolean restartDevice(String devUid) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         DeviceRestartEvent restartEvent = new DeviceRestartEvent();
         restartEvent.setCmd("reset");
         restartEvent.setCreateTime(System.currentTimeMillis());
         String json = GsonUtils.toJson(restartEvent);
         mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
     }
 
     /**
@@ -1561,12 +1586,14 @@ public class CatEyeSDKInterface implements CatEyeView {
      *
      * @param devUid 设备的devUid
      */
-    public void getDeviceSettings(String devUid) {
+    public boolean getDeviceSettings(String devUid) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         DeviceSettings deviceSettings = new DeviceSettings();
         deviceSettings.setCmd("get_device_status");
         String json = GsonUtils.toJson(deviceSettings);
         mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
     }
 
     /**
@@ -1574,12 +1601,14 @@ public class CatEyeSDKInterface implements CatEyeView {
      *
      * @param devUid 设备的devUid
      */
-    public void checkDeviceVersion(String devUid) {
+    public boolean checkDeviceVersion(String devUid) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         DeviceSettings deviceSettings = new DeviceSettings();
         deviceSettings.setCmd("UpdateDevice");
         String json = GsonUtils.toJson(deviceSettings);
         mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
     }
 
     /**
@@ -1587,12 +1616,14 @@ public class CatEyeSDKInterface implements CatEyeView {
      *
      * @param devUid 设备的devUid
      */
-    public void confirmDeviceUpdate(String devUid) {
+    public boolean confirmDeviceUpdate(String devUid) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         DeviceSettings deviceSettings = new DeviceSettings();
         deviceSettings.setCmd("ConfirmUpdateDevice");
         String json = GsonUtils.toJson(deviceSettings);
         mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
     }
 
     /**
@@ -1602,7 +1633,7 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @param deviceSettings 设备属性的类
      * @see DeviceSettings
      */
-    public void settingDevice(String devUid, DeviceSettings deviceSettings) {
+    public boolean settingDevice(String devUid, DeviceSettings deviceSettings) {
 
         SetDeviceSettingEntity entity = new SetDeviceSettingEntity();
         entity.setCmd("set_device_setting");
@@ -1638,6 +1669,8 @@ public class CatEyeSDKInterface implements CatEyeView {
         Logger.dd("[settingDevice] jsonStr: " + json);
 
         mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
     }
 
     /**
@@ -1645,12 +1678,14 @@ public class CatEyeSDKInterface implements CatEyeView {
      *
      * @param devUid 设备的devUid
      */
-    public void queryDeviceOnline(String devUid) {
+    public boolean queryDeviceOnline(String devUid) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
         DeviceOnlineEvent deviceSettings = new DeviceOnlineEvent();
         deviceSettings.setCmd("queryOnline");
         String json = GsonUtils.toJson(deviceSettings);
         mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
     }
 
     /**
@@ -1659,36 +1694,42 @@ public class CatEyeSDKInterface implements CatEyeView {
      * @param devUid
      * @param work_Mode 0省电模式 1标准模式 2智能省电模式 晚10点-早7点休眠
      */
-    public void switchDeviceWorkMode(String devUid, int work_Mode) {
+    public boolean switchDeviceWorkMode(String devUid, int work_Mode) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
-        if (work_Mode < 0 || work_Mode > 2) return;
+        if (work_Mode < 0 || work_Mode > 2) return false;
         DeviceWorkModeChangeEvent event = new DeviceWorkModeChangeEvent();
         event.setCmd("set_device_work_mode");
         event.setWorkMode(work_Mode);
         String json = GsonUtils.toJson(event);
         mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
     }
 
     /**
      * @param devUid
      * @param base64CustomJson base64之后的json字符串 规则：Base64.NO_WRAP
      */
-    public void sendCustomJson(String devUid, String base64CustomJson) {
+    public boolean sendCustomJson(String devUid, String base64CustomJson) {
         String topic = MqttUtils.getAppPubAllTopic(devUid);
-        if (TextUtils.isEmpty(base64CustomJson)) return;
+        if (TextUtils.isEmpty(base64CustomJson)) return false;
         CustomBase64JsonContent event = new CustomBase64JsonContent();
         event.setCmd("base64_custom_json");
         event.setBase64_custom_json(base64CustomJson);
         String json = GsonUtils.toJson(event);
         mqttManager.publish(topic, json, false, 2);
+
+        return mqttManager.isConnected();
     }
 
     /**
      * 掉线重连消息通道
      */
-    public void reconnectSocket() {
+    public boolean reconnectSocket() {
         if (null != mqttManager) {
-            mqttManager.reconnect();
+            return mqttManager.reconnect();
+        } else {
+            return false;
         }
     }
 
@@ -1703,11 +1744,13 @@ public class CatEyeSDKInterface implements CatEyeView {
             Logger.dd("[subscribe] but devUids is empty.");
             return;
         }
-        String[] topics = new String[devUids.length];
-        int[] qoss = new int[devUids.length];
-        for (int i = 0; i < devUids.length; i++) {
+        String[] topics = new String[devUids.length * 2];
+        int[] qoss = new int[devUids.length * 2];
+        for (int i = 0; i < devUids.length * 2; i += 2) {
             topics[i] = MqttUtils.getAppSubTopic(devUids[i]);
+            topics[i + 1] = MqttUtils.getAppSubAppTopic(devUids[i], CatEyePreferences.get().getAppUid() + "-" + CatEyePreferences.get().getAppEnvid());
             qoss[i] = 2;
+            qoss[i + 1] = 2;
         }
 
         Logger.dd("topics: " + Arrays.toString(topics));
