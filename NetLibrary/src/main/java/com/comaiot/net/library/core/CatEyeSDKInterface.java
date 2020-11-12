@@ -1744,14 +1744,24 @@ public class CatEyeSDKInterface implements CatEyeView {
             Logger.dd("[subscribe] but devUids is empty.");
             return;
         }
-        String[] topics = new String[devUids.length * 2];
-        int[] qoss = new int[devUids.length * 2];
-        for (int i = 0; i < devUids.length * 2; i += 2) {
-            topics[i] = MqttUtils.getAppSubTopic(devUids[i]);
-            topics[i + 1] = MqttUtils.getAppSubAppTopic(devUids[i], CatEyePreferences.get().getAppUid() + "-" + CatEyePreferences.get().getAppEnvid());
-            qoss[i] = 2;
-            qoss[i + 1] = 2;
+        String[] topics_tmp1 = new String[devUids.length];
+        int[] qoss_tmp1 = new int[devUids.length];
+
+        String[] topics_tmp2 = new String[devUids.length];
+        int[] qoss_tmp2 = new int[devUids.length];
+
+        for (int i = 0; i < devUids.length; i++) {
+            topics_tmp1[i] = MqttUtils.getAppSubTopic(devUids[i]);
+            topics_tmp2[i] = MqttUtils.getAppSubAppTopic(devUids[i], CatEyePreferences.get().getAppUid() + "-" + CatEyePreferences.get().getAppEnvid());
+            qoss_tmp1[i] = 2;
+            qoss_tmp2[i] = 2;
         }
+
+        String[] topics = Arrays.copyOf(topics_tmp1, topics_tmp1.length + topics_tmp2.length);
+        System.arraycopy(topics_tmp2, 0, topics, topics_tmp1.length, topics_tmp2.length);
+
+        int[] qoss = Arrays.copyOf(qoss_tmp1, qoss_tmp1.length + qoss_tmp2.length);
+        System.arraycopy(qoss_tmp2, 0, qoss, qoss_tmp1.length, qoss_tmp2.length);
 
         Logger.dd("topics: " + Arrays.toString(topics));
         Logger.dd("qoss: " + Arrays.toString(qoss));

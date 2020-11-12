@@ -28,7 +28,7 @@ android {
     }
 
     def SDK_NAME = 'comaiot_cat_eye_sdk'
-    def SDK_VERSION = '_V1.1.7'
+    def SDK_VERSION = '_V1.1.7_Release'
 
     android.libraryVariants.all { variant ->
         variant.outputs.all {
@@ -60,7 +60,7 @@ dependencies {
 }
 
 def SDK_NAME = 'comaiot_cat_eye_sdk'
-def SDK_VERSION = '_V1.1.7'
+def SDK_VERSION = '_V1.1.7_Release'
 
 task deleteBuild(type: Delete) {
     delete "build/libs/" + SDK_NAME + SDK_VERSION + ".jar"
