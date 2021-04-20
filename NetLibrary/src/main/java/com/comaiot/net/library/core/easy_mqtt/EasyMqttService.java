@@ -526,7 +526,7 @@ public class EasyMqttService {
                 if (null != MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback()) {
                     MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback().onDeviceCallAudioEvent(devUid, audioCallEvent);
                 }
-            } else if (cmdInfo.getCmd().equals("queryOnline") || cmdInfo.getCmd().equals("online")) {
+            } else if (cmdInfo.getCmd().equals("queryOnline") || cmdInfo.getCmd().equals("online") || cmdInfo.getCmd().equals("offline")) {
                 DeviceOnlineEvent onlineEvent = GsonUtils.fromJson(msgContent, DeviceOnlineEvent.class);
 
                 if (null != MqttManagerInter.getInstance(CatEyeSDKInterface.get().getContext()).getCallback()) {
