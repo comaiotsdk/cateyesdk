@@ -10,3 +10,6 @@
 .externalNativeBuild
 /DemoTest
 .idea/
+.idea/misc.xml
+gradle.properties
+/gradlew

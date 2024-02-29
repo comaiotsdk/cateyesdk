@@ -191,7 +191,22 @@ public class RetrofitUtil {
         this.sk = sk;
         //手动创建一个OkHttpClient并设置超时时间
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .sslSocketFactory(createSSLSocketFactory())
+                .sslSocketFactory(createSSLSocketFactory(), new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+                    }
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+                    }
+
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[0];
+                    }
+                })
                 .hostnameVerifier(new TrustAllHostnameVerifier())
                 .addInterceptor(new Interceptor() {
                     @Override
@@ -220,7 +235,22 @@ public class RetrofitUtil {
         String credentials = "7f6225d84839403a98ee1c0ed662c011:d8f227018cd44ca781772a5c011de4b0";
         final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
         OkHttpClient.Builder arogaBuilder = new OkHttpClient.Builder()
-                .sslSocketFactory(createSSLSocketFactory())
+                .sslSocketFactory(createSSLSocketFactory(), new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        
+                    }
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+                    }
+
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[0];
+                    }
+                })
                 .hostnameVerifier(new TrustAllHostnameVerifier())
                 .addInterceptor(new Interceptor() {
                     @Override
