@@ -295,7 +295,7 @@ public class RetrofitUtil {
         SSLSocketFactory sSLSocketFactory = null;
 
         try {
-            SSLContext sc = SSLContext.getInstance("TLS");
+            SSLContext sc = SSLContext.getInstance("SSL");
             sc.init(null, new TrustManager[]{new TrustAllManager()},
                     new SecureRandom());
             sSLSocketFactory = sc.getSocketFactory();
